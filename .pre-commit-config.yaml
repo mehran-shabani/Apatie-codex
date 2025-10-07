@@ -1,0 +1,57 @@
+default_language_version:
+  python: python3.11
+
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+        name: black (Python formatting)
+        types: [python]
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (Python imports)
+        types: [python]
+        args: ["--profile=black"]
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        name: flake8 (Python lint)
+        types: [python]
+  - repo: https://github.com/PyCQA/pylint
+    rev: v3.1.0
+    hooks:
+      - id: pylint
+        name: pylint (Django aware)
+        types: [python]
+        args:
+          - --django-settings-module=core.settings.test
+          - --load-plugins=pylint_django
+        env:
+          DJANGO_SETTINGS_MODULE: core.settings.test
+          PYTHONPATH: backend
+        additional_dependencies:
+          - pylint-django==3.1.0
+  - repo: local
+    hooks:
+      - id: django-check-migrations
+        name: Django migrations up-to-date
+        entry: bash -c 'python backend/manage.py makemigrations --check --dry-run'
+        language: system
+        pass_filenames: false
+        stages: [commit, manual]
+      - id: flutter-format
+        name: Flutter format
+        entry: bash -c 'cd frontend/flutter_app && flutter format --set-exit-if-changed .'
+        language: system
+        files: ^frontend/flutter_app/.*\.(dart|ya?ml)$
+        pass_filenames: false
+      - id: flutter-analyze
+        name: Flutter analyze
+        entry: bash -c 'cd frontend/flutter_app && flutter analyze'
+        language: system
+        files: ^frontend/flutter_app/.*\.(dart|ya?ml)$
+        pass_filenames: false

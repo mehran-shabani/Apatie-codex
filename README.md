@@ -1,5 +1,11 @@
 # Apatie Codex
 
+[![Backend CI](https://github.com/OWNER/Apatie-codex/actions/workflows/backend.yml/badge.svg)](https://github.com/OWNER/Apatie-codex/actions/workflows/backend.yml)
+[![Frontend CI](https://github.com/OWNER/Apatie-codex/actions/workflows/frontend.yml/badge.svg)](https://github.com/OWNER/Apatie-codex/actions/workflows/frontend.yml)
+[![Infrastructure Checks](https://github.com/OWNER/Apatie-codex/actions/workflows/infra.yml/badge.svg)](https://github.com/OWNER/Apatie-codex/actions/workflows/infra.yml)
+
+> Replace `OWNER` with the GitHub organisation or username that hosts this repository to render live status badges.
+
 ## Development Environment Bootstrap
 
 ### Docker Compose workflow
@@ -82,6 +88,23 @@ If you prefer running the backend without Docker:
    celery -A core.celery beat -l info
    python backend/manage.py runworker
    ```
+
+### Pre-commit hooks
+
+Automate formatting, linting, and migration checks with [pre-commit](https://pre-commit.com/). The configured hooks run Black,
+isort, Flake8, and Pylint for the Django backend, enforce `flutter format`/`flutter analyze` for the client, and ensure
+migrations are kept in sync:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Run all hooks locally before pushing changes:
+
+```bash
+pre-commit run --all-files
+```
 
 ## Backend overview
 
