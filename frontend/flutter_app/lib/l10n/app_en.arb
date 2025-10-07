@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "appTitle": "Apatie Codex",
+  "appointmentsTab": "Appointments",
+  "marketplaceTab": "Products",
+  "servicesTab": "Services",
+  "appointmentsHeadline": "Manage your appointments",
+  "marketplaceHeadline": "Browse available products",
+  "servicesHeadline": "Discover services",
+  "themeToggleTooltip": "Toggle theme"
+}

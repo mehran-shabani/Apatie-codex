@@ -67,6 +67,37 @@ Use Django's test runner with the dedicated test settings module:
 DJANGO_SETTINGS_MODULE=core.settings.test python backend/manage.py test
 ```
 
+## Frontend (Flutter) Setup
+
+The Flutter client lives in `frontend/flutter_app/` and targets Flutter 3.x with
+sound null safety. The app is organised into feature modules (`appointments`,
+`marketplace`, `services`) and separates responsibilities into `data`,
+`domain`, and `ui` layers.
+
+### Prerequisites
+
+* Flutter SDK 3.x (`flutter --version` should report a 3.x release)
+* Dart SDK that ships with Flutter
+
+### Install dependencies and generate localization code
+
+```bash
+cd frontend/flutter_app
+flutter pub get
+flutter gen-l10n
+```
+
+### Run static analysis and tests
+
+```bash
+cd frontend/flutter_app
+flutter analyze
+flutter test
+```
+
+The widget tests include coverage for the tabbed navigation scaffolded with
+GoRouter, and unit tests ensure the hydrated theme cubit behaves as expected.
+
 ### Code Quality
 
 This repository provides foundational stubs for serializers, viewsets, and integrations (payments, notifications). Extend these stubs with real implementations as business requirements evolve. The logging configuration includes an `apatie.audit` logger to support future audit trails.

@@ -1,0 +1,19 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+build/
+flutter_*.png
+pubspec.lock
+
+# IntelliJ related
+*.iml
+.idea/
+
+# VS Code related
+.vscode/
+
+# Generated localization files
+lib/l10n/generated/
+
+# Misc
+.DS_Store
