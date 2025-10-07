@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+
+# Environment files
+.env
+backend/.env
+frontend/.env
+
+# Django
+staticfiles/
+media/
+
+# Flutter
+build/
+.dart_tool/
+.packages
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool
+
+# IDE / Editor
+.vscode/
+.idea/
+.DS_Store
+
+# SQLite artifacts
+*.sqlite3
