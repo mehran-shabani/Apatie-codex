@@ -1,0 +1,8 @@
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+default-template-type: arb
+generated-class: AppLocalizations
+output-localization-file: app_localizations.dart
+synthetic-package: true
+nullable-getter: false
+untranslated-messages-file: untranslated_messages.txt
