@@ -103,10 +103,21 @@ All configurable settings are documented in `backend/.env.example`. The project 
 
 ### Running tests
 
-Use Django's test runner with the dedicated test settings module:
+#### Backend (pytest)
+
+Run the Python test suite from the repository root. The provided `pytest.ini` automatically configures the Django settings module and Python path.
 
 ```bash
-DJANGO_SETTINGS_MODULE=core.settings.test python backend/manage.py test
+pytest
+```
+
+#### Frontend (Flutter)
+
+Execute the Flutter widget and unit tests from the app directory:
+
+```bash
+cd frontend/flutter_app
+flutter test
 ```
 
 ## Frontend (Flutter) Setup
