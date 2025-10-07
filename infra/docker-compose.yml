@@ -1,0 +1,82 @@
+version: "3.9"
+
+x-backend-service: &backend-service
+  image: apatie-backend:latest
+  env_file:
+    - ../.env
+    - ../backend/.env
+  volumes:
+    - ../:/app
+  working_dir: /app/backend
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  networks:
+    - app-network
+  restart: unless-stopped
+
+services:
+  db:
+    image: postgres:14
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-apatie}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER:-postgres}\" -d \"$${POSTGRES_DB:-apatie}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    <<: *backend-service
+    build:
+      context: ..
+      dockerfile: infra/backend.Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+
+  celery_worker:
+    <<: *backend-service
+    command: celery -A core.celery worker -l info
+
+  celery_beat:
+    <<: *backend-service
+    command: celery -A core.celery beat -l info
+
+  channels_worker:
+    <<: *backend-service
+    command: python manage.py runworker
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
