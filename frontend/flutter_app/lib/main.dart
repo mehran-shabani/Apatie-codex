@@ -7,14 +7,20 @@ import 'package:path_provider/path_provider.dart';
 import 'app.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  final storage = await HydratedStorage.build(
-    storageDirectory: await getApplicationSupportDirectory(),
-  );
+    final storage = await HydratedStorage.build(
+      storageDirectory: await getApplicationSupportDirectory(),
+    );
 
-  HydratedBlocOverrides.runZoned(
-    () => runApp(App()),
-    storage: storage,
-  );
+    HydratedBlocOverrides.runZoned(
+      () => runApp(App()),
+      storage: storage,
+    );
+  }, (error, stack) {
+    // TODO: Log errors to a remote service (e.g., Sentry, Firebase Crashlytics)
+    debugPrint('Caught unhandled error: $error');
+    debugPrint(stack.toString());
+  });
 }
