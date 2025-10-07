@@ -8,14 +8,14 @@ class ThemeCubit extends HydratedCubit<ThemeMode> {
 
   void toggleTheme() {
     switch (state) {
+      case ThemeMode.system:
+        emit(ThemeMode.light);
+        break;
       case ThemeMode.light:
         emit(ThemeMode.dark);
         break;
       case ThemeMode.dark:
-        emit(ThemeMode.light);
-        break;
-      case ThemeMode.system:
-        emit(ThemeMode.dark);
+        emit(ThemeMode.system);
         break;
     }
   }
