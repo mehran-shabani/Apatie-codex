@@ -49,6 +49,6 @@ class AppRouter {
         ],
       ),
     ],
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: kDebugMode,
   );
 }
