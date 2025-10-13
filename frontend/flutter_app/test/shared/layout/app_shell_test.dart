@@ -187,13 +187,13 @@ void main() {
 
     testWidgets('renders localized labels for supported locales', (tester) async {
       await runHydrated(() async {
+        // Move these out of the loop so they’re disposed only once:
+        final themeCubit = ThemeCubit();
+        addTearDown(themeCubit.close);
+        final currentIndexNotifier = ValueNotifier<int>(0);
+        addTearDown(currentIndexNotifier.dispose);
+
         for (final locale in AppLocalizations.supportedLocales) {
-          final themeCubit = ThemeCubit();
-          addTearDown(themeCubit.close);
-
-          final currentIndexNotifier = ValueNotifier<int>(0);
-          addTearDown(currentIndexNotifier.dispose);
-
           final navigationShell = _TestNavigationShell(
             currentIndexNotifier: currentIndexNotifier,
             onGoBranch: (_, {bool initialLocation = false}) {},
