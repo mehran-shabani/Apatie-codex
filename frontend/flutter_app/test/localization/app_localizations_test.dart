@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_app/app.dart';
+import 'package:apatie/app.dart';
 
 import '../helpers/hydrated_bloc.dart';
 

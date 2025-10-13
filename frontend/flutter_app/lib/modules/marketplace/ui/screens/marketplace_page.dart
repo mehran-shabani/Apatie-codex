@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/l10n/app_localizations.dart';
+import 'package:apatie/l10n/app_localizations.dart';
 
 class MarketplacePage extends StatelessWidget {
   const MarketplacePage({super.key});

@@ -8,14 +8,16 @@ from pathlib import Path
 import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DEFAULT_SQLITE_PATH = BASE_DIR / "db.sqlite3"
+DEFAULT_SQLITE_URL = f"sqlite:///{DEFAULT_SQLITE_PATH.as_posix()}"
 
 # Load environment variables
 ENV = environ.Env(
     DEBUG=(bool, False),
     SECRET_KEY=(str, "change-me"),
     ALLOWED_HOSTS=(list, ["*"]),
-    DATABASE_URL=(str, "postgres://postgres:postgres@localhost:5432/apatie"),
-    REDIS_URL=(str, "redis://localhost:6379/0"),
+    DATABASE_URL=(str, DEFAULT_SQLITE_URL),
+    REDIS_URL=(str, ""),
     CORS_ALLOWED_ORIGINS=(list, []),
     CSRF_TRUSTED_ORIGINS=(list, []),
     DJANGO_LOG_LEVEL=(str, "INFO"),
@@ -30,6 +32,7 @@ SECRET_KEY = ENV("SECRET_KEY")
 DEBUG = ENV("DEBUG")
 ALLOWED_HOSTS = ENV.list("ALLOWED_HOSTS")
 ADMIN_URL = ENV("DJANGO_ADMIN_URL")
+REDIS_URL = ENV.str("REDIS_URL", default="")
 
 # Applications
 DJANGO_APPS = [
@@ -46,6 +49,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "corsheaders",
+    "django_guid",
     "drf_spectacular",
     "django_filters",
     "channels",
@@ -67,7 +71,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "django_guid.middleware.GuidMiddleware",
+    "django_guid.middleware.guid_middleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -99,7 +103,7 @@ ASGI_APPLICATION = "core.asgi.application"
 
 # Database
 DATABASES = {
-    "default": ENV.db("DATABASE_URL"),
+    "default": ENV.db("DATABASE_URL", default=DEFAULT_SQLITE_URL),
 }
 
 # Authentication
@@ -180,19 +184,26 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = ENV.list("CSRF_TRUSTED_ORIGINS")
 
 # Channels configuration
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [ENV("REDIS_URL")],
-        },
+if REDIS_URL:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [REDIS_URL],
+            },
+        }
     }
-}
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        }
+    }
 
 # Celery configuration
-CELERY_BROKER_URL = ENV("REDIS_URL")
-CELERY_RESULT_BACKEND = ENV("REDIS_URL")
-CELERY_TASK_ALWAYS_EAGER = False
+CELERY_BROKER_URL = REDIS_URL or "memory://"
+CELERY_RESULT_BACKEND = REDIS_URL or "cache+memory://"
+CELERY_TASK_ALWAYS_EAGER = not REDIS_URL
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"

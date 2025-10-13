@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:flutter_app/shared/theme/theme_cubit.dart';
+import 'package:apatie/shared/theme/theme_cubit.dart';
 import '../../helpers/hydrated_bloc.dart';
 
 void main() {

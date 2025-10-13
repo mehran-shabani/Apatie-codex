@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_app/design_system/components/app_component_states.dart';
-import 'package:flutter_app/design_system/foundations/radii.dart';
-import 'package:flutter_app/design_system/foundations/shadows.dart';
-import 'package:flutter_app/design_system/foundations/spacing.dart';
-import 'package:flutter_app/design_system/foundations/touch_targets.dart';
+import 'package:apatie/design_system/components/app_component_states.dart';
+import 'package:apatie/design_system/foundations/radii.dart';
+import 'package:apatie/design_system/foundations/shadows.dart';
+import 'package:apatie/design_system/foundations/spacing.dart';
+import 'package:apatie/design_system/foundations/touch_targets.dart';
 
 class AppButton extends StatefulWidget {
   const AppButton({

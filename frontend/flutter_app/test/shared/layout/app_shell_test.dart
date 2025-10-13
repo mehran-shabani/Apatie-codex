@@ -4,10 +4,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:flutter_app/l10n/app_localizations.dart';
-import 'package:flutter_app/shared/layout/app_shell.dart';
-import 'package:flutter_app/shared/theme/app_theme.dart';
-import 'package:flutter_app/shared/theme/theme_cubit.dart';
+import 'package:apatie/l10n/app_localizations.dart';
+import 'package:apatie/shared/layout/app_shell.dart';
+import 'package:apatie/shared/theme/app_theme.dart';
+import 'package:apatie/shared/theme/theme_cubit.dart';
 
 import '../../helpers/hydrated_bloc.dart';
 

@@ -22,6 +22,7 @@ LOGGING: Dict[str, Any] = {
     "filters": {
         "request_id": {
             "()": "django_guid.log_filters.CorrelationId",  # falls back gracefully if middleware missing
+            "correlation_id_field": "request_id",
         }
     },
     "handlers": {

@@ -16,7 +16,7 @@ frontend/.env
 # Django
 staticfiles/
 media/
-
+**/migrations/
 # Flutter
 build/
 .dart_tool/

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_app/l10n/app_localizations.dart';
-import 'package:flutter_app/shared/widgets/app_navigation_bar.dart';
+import 'package:apatie/l10n/app_localizations.dart';
+import 'package:apatie/shared/widgets/app_navigation_bar.dart';
 
 Widget _buildWrappedNavigationBar({
   int currentIndex = 0,

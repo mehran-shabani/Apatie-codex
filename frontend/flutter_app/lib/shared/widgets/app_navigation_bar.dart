@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/design_system/components/app_component_states.dart';
-import 'package:flutter_app/design_system/components/app_navigation_bar.dart'
+import 'package:apatie/design_system/components/app_component_states.dart';
+import 'package:apatie/design_system/components/app_navigation_bar.dart'
     as design_system;
-import 'package:flutter_app/l10n/app_localizations.dart';
+import 'package:apatie/l10n/app_localizations.dart';
 
 class AppNavigationBar extends StatelessWidget {
   const AppNavigationBar({

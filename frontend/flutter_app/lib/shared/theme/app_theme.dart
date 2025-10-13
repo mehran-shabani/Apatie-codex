@@ -1,13 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/design_system/foundations/colors.dart';
-import 'package:flutter_app/design_system/foundations/radii.dart';
-import 'package:flutter_app/design_system/foundations/semantic_colors.dart';
-import 'package:flutter_app/design_system/foundations/shadows.dart';
-import 'package:flutter_app/design_system/foundations/spacing.dart';
-import 'package:flutter_app/design_system/foundations/touch_targets.dart';
-import 'package:flutter_app/design_system/foundations/typography.dart';
+import 'package:apatie/design_system/foundations/colors.dart';
+import 'package:apatie/design_system/foundations/radii.dart';
+import 'package:apatie/design_system/foundations/semantic_colors.dart';
+import 'package:apatie/design_system/foundations/shadows.dart';
+import 'package:apatie/design_system/foundations/spacing.dart';
+import 'package:apatie/design_system/foundations/touch_targets.dart';
+import 'package:apatie/design_system/foundations/typography.dart';
 
 class AppTheme {
   const AppTheme._();

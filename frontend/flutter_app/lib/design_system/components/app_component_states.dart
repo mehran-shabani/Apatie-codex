@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/design_system/foundations/semantic_colors.dart';
+import 'package:apatie/design_system/foundations/semantic_colors.dart';
 
 enum AppComponentStatus {
   neutral,
