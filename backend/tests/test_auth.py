@@ -23,9 +23,7 @@ def test_jwt_auth_flow(api_client, user_factory):
     list_response = api_client.get(user_list_url)
 
     assert list_response.status_code == 200
-    payload = list_response.json()
-    if isinstance(payload, dict) and "results" in payload:
-        payload = payload["results"]
+    payload = extract_results(list_response.json())
     assert any(item["email"] == user.email for item in payload)
 
     refresh_url = reverse("api_auth:jwt-refresh")
