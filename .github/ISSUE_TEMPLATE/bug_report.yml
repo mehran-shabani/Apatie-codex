@@ -1,0 +1,60 @@
+name: Bug Report
+description: Report a reproducible problem in the project
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Provide a concise summary of the issue.
+      placeholder: Short description of the problem
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Reproduction Steps
+      description: List the steps that consistently reproduce the issue.
+      placeholder: |
+        1. Go to...
+        2. Click on...
+        3. Observe...
+    validations:
+      required: true
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behaviour
+      description: Describe what you expected to happen instead.
+      placeholder: Describe the expected outcome
+    validations:
+      required: true
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual Behaviour
+      description: Explain what actually happened, including error messages.
+      placeholder: Describe the observed behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Add links or drag in any relevant screenshots.
+      placeholder: Attach or link to screenshots
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define the conditions that must be met for the fix to be considered complete.
+      placeholder: List acceptance criteria
+    validations:
+      required: false

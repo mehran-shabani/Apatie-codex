@@ -8,6 +8,10 @@
 
 ## Development Environment Bootstrap
 
+## Contributing
+
+We encourage contributors to review our [issue templates](.github/ISSUE_TEMPLATE/) and [pull request template](.github/pull_request_template.md) before opening a ticket or submitting code. Bug reports and feature proposals should include clear summaries, reproduction steps or problem statements, expected outcomes, relevant screenshots, and acceptance criteria to help maintainers respond quickly. Pull requests should document the change summary, testing evidence, release note impact, and any deployment considerations so reviewers can merge with confidence.
+
 ### Docker Compose workflow
 
 1. Copy the provided environment templates:
