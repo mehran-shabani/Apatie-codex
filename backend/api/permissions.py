@@ -22,14 +22,19 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         if getattr(request.user, "is_staff", False):
             return True
 
-        owner_attr = getattr(view, "owner_attribute", self.owner_attribute)
-        owner: Any = getattr(obj, owner_attr, None)
+        owner_lookup_attributes = [
+            getattr(view, "owner_attribute", self.owner_attribute),
+            "user",
+            "recipient",
+            "customer",
+        ]
 
-        if owner is None and hasattr(obj, "user"):
-            owner = getattr(obj, "user")
-
-        if owner is None and hasattr(obj, "recipient"):
-            owner = getattr(obj, "recipient")
+        owner: Any = None
+        for attr in owner_lookup_attributes:
+            candidate = getattr(obj, attr, None)
+            if candidate is not None:
+                owner = candidate
+                break
 
         if owner is None:
             return False
