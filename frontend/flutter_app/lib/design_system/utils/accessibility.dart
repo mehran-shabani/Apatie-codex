@@ -18,7 +18,7 @@ class AccessibilityUtils {
     BuildContext context, {
     int milliseconds = 180,
   }) {
-    final clamped = milliseconds.clamp(0, 200);
+    final clamped = milliseconds.clamp(0, 200).toInt();
     if (reduceMotion(context)) {
       return Duration.zero;
     }
