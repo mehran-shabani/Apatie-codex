@@ -126,11 +126,10 @@ The backend is a Django project located in the `backend/` directory. It provides
 ### API & Tooling
 
 * REST API endpoints are namespaced under `/api/v1/`.
-* JWT authentication endpoints are available at `/api/v1/token/` and `/api/v1/token/refresh/`.
+* JWT authentication endpoints are available at `/api/auth/jwt/create/` and `/api/auth/jwt/refresh/`.
 * API schema documentation is served via:
   * `/api/schema/` for the OpenAPI schema (JSON)
-  * `/api/schema/swagger/` for Swagger UI
-  * `/api/schema/redoc/` for ReDoc
+  * `/api/docs/` for Swagger UI
 * A health check endpoint is exposed at `/healthz`.
 
 ### Environment Variables
