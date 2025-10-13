@@ -4,18 +4,20 @@ set -euo pipefail
 APT_PACKAGES=(curl git unzip xz-utils zip libglu1-mesa)
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get install -y --no-install-recommends "${APT_PACKAGES[@]}"
-rm -rf /var/lib/apt/lists/*
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends "${APT_PACKAGES[@]}"
+sudo rm -rf /var/lib/apt/lists/*
 
+sudo install -d -m 0755 -o "$(id -u)" -g "$(id -g)" /opt/flutter
 if [ ! -d "/opt/flutter/.git" ]; then
-  git clone https://github.com/flutter/flutter.git /opt/flutter
+  git clone --depth 1 --branch stable https://github.com/flutter/flutter.git /opt/flutter
 else
-  git -C /opt/flutter fetch --tags
-  git -C /opt/flutter pull --ff-only
+  git -C /opt/flutter fetch origin stable --depth 1
+  git -C /opt/flutter reset --hard FETCH_HEAD
 fi
 
-cat <<'PATH_EOF' > /etc/profile.d/flutter.sh
+sudo mkdir -p /etc/profile.d
+sudo tee /etc/profile.d/flutter.sh > /dev/null <<'PATH_EOF'
 export PATH="/opt/flutter/bin:$PATH"
 PATH_EOF
 
@@ -30,7 +32,12 @@ pip install -r requirements.txt
 
 pushd frontend/flutter_app
 flutter pub get
-flutter test
 popd
 
-pytest
+cat <<'INFO'
+The dev container bootstrap finished successfully.
+
+Run frontend and backend test suites manually once you are ready:
+  pushd frontend/flutter_app && flutter test && popd
+  pytest
+INFO
