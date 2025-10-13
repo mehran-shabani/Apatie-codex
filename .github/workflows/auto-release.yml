@@ -1,0 +1,281 @@
+name: Auto Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  version_bump:
+    name: Bump Version Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags
+        run: git fetch --tags --force
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Determine next version
+        id: semver
+        run: |
+          VERSION=$(python backend/scripts/semver_bump.py)
+          echo "new_version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Detect project components
+        id: components
+        run: |
+          if [ -f frontend/pubspec.yaml ]; then
+            echo "has_flutter=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_flutter=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -f backend/manage.py ]; then
+            echo "has_django=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_django=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -f backend/requirements.txt ]; then
+            echo "has_requirements=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_requirements=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create and push tag
+        env:
+          VERSION: ${{ steps.semver.outputs.new_version }}
+        run: |
+          TAG="v${VERSION}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists"
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
+
+    outputs:
+      new_version: ${{ steps.semver.outputs.new_version }}
+      has_flutter: ${{ steps.components.outputs.has_flutter }}
+      has_django: ${{ steps.components.outputs.has_django }}
+      has_requirements: ${{ steps.components.outputs.has_requirements }}
+
+  build_flutter:
+    name: Build Flutter Artifacts
+    needs: version_bump
+    runs-on: ubuntu-latest
+    if: ${{ needs.version_bump.outputs.has_flutter == 'true' }}
+    env:
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' && secrets.ANDROID_KEYSTORE_PASSWORD != '' && secrets.ANDROID_KEY_ALIAS != '' && secrets.ANDROID_KEY_PASSWORD != '' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Show Flutter environment
+        run: |
+          flutter --version
+          flutter doctor -v
+
+      - name: Restore Flutter dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            frontend/.dart_tool
+          key: ${{ runner.os }}-flutter-${{ hashFiles('frontend/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-flutter-
+
+      - name: Get Flutter packages
+        working-directory: frontend
+        run: flutter pub get
+
+      - name: Prepare Android signing configuration
+        if: env.HAS_KEYSTORE == 'true'
+        working-directory: frontend
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          mkdir -p android/app
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          cat <<'PROPS' > android/key.properties
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=upload-keystore.jks
+          PROPS
+
+      - name: Build Flutter APK (signed release)
+        if: env.HAS_KEYSTORE == 'true'
+        working-directory: frontend
+        run: flutter build apk --release
+
+      - name: Build Flutter APK (unsigned release)
+        if: env.HAS_KEYSTORE != 'true'
+        working-directory: frontend
+        run: flutter build apk --release
+
+      - name: Build Flutter Web (release)
+        working-directory: frontend
+        run: flutter build web --release
+
+      - name: Archive Flutter web build
+        working-directory: frontend/build/web
+        run: zip -r ../../frontend_web.zip .
+
+      - name: Clean up signing artifacts
+        if: env.HAS_KEYSTORE == 'true'
+        working-directory: frontend
+        run: |
+          rm -f android/app/upload-keystore.jks android/key.properties
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.apk
+          path: frontend/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+
+      - name: Upload Flutter web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend_web.zip
+          path: frontend/frontend_web.zip
+          if-no-files-found: error
+
+  check_django:
+    name: Django Health Check
+    needs: version_bump
+    runs-on: ubuntu-latest
+    if: ${{ needs.version_bump.outputs.has_django == 'true' }}
+    continue-on-error: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        if: ${{ needs.version_bump.outputs.has_requirements == 'true' }}
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run Django system checks
+        working-directory: backend
+        run: |
+          python manage.py check --deploy
+          python manage.py collectstatic --noinput --dry-run
+
+  package_repo:
+    name: Package Repository Snapshot
+    needs: version_bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create repository archive
+        run: |
+          zip -r repo.zip . \
+            -x ".git/*" \
+            -x "frontend/build/*" \
+            -x "**/node_modules/*"
+
+      - name: Upload repository archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-archive
+          path: repo.zip
+          if-no-files-found: error
+
+  create_release:
+    name: Publish Release
+    needs:
+      - version_bump
+      - build_flutter
+      - package_repo
+      - check_django
+    if: ${{ always() && needs.version_bump.result == 'success' && needs.build_flutter.result == 'success' && needs.package_repo.result == 'success' && (needs.check_django.result == 'success' || needs.check_django.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release.apk
+          path: artifacts
+
+      - name: Download web artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend_web.zip
+          path: artifacts
+
+      - name: Download repository archive
+        uses: actions/download-artifact@v4
+        with:
+          name: repository-archive
+          path: artifacts
+
+      - name: Generate release notes
+        run: |
+          cat <<'EOF' > release-notes.md
+          ## Automated Release
+
+          - Version: v${{ needs.version_bump.outputs.new_version }}
+          - Generated on: $(date -u)
+
+          This release was automatically generated by the CI workflow.
+          EOF
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.version_bump.outputs.new_version }}
+          name: Release v${{ needs.version_bump.outputs.new_version }}
+          body_path: release-notes.md
+          files: |
+            artifacts/app-release.apk
+            artifacts/frontend_web.zip
+            artifacts/repo.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
