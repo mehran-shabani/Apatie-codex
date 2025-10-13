@@ -1,4 +1,5 @@
 """Viewsets for marketplace listings."""
+
 from __future__ import annotations
 
 from rest_framework import permissions, viewsets

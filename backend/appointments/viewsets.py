@@ -1,4 +1,5 @@
 """Viewsets for appointment resources."""
+
 from __future__ import annotations
 
 from rest_framework import permissions, viewsets
@@ -8,7 +9,9 @@ from .serializers import AppointmentSerializer
 
 
 class AppointmentViewSet(viewsets.ModelViewSet):
-    queryset = Appointment.objects.select_related("customer", "business", "service").all()
+    queryset = Appointment.objects.select_related(
+        "customer", "business", "service"
+    ).all()
     serializer_class = AppointmentSerializer
     permission_classes = [permissions.IsAuthenticated]
 

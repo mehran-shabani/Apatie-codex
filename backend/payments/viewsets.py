@@ -1,4 +1,5 @@
 """Viewsets for payment resources."""
+
 from __future__ import annotations
 
 from rest_framework import permissions, status, viewsets
@@ -23,7 +24,11 @@ class PaymentTransactionViewSet(viewsets.ModelViewSet):
     def capture(self, request, *args, **kwargs):
         payment = self.get_object()
         gateway = self.gateway_class()
-        result = gateway.charge(amount=float(payment.amount), currency=payment.currency, metadata={"reference": str(payment.pk)})
+        result = gateway.charge(
+            amount=float(payment.amount),
+            currency=payment.currency,
+            metadata={"reference": str(payment.pk)},
+        )
         payment.mark_completed(result.reference)
         serializer = self.get_serializer(payment)
         return Response(serializer.data, status=status.HTTP_200_OK)

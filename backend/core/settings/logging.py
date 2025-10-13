@@ -1,4 +1,5 @@
 """Logging configuration for the Apatie backend."""
+
 from __future__ import annotations
 
 import logging

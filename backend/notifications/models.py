@@ -1,4 +1,5 @@
 """Notification domain models."""
+
 from __future__ import annotations
 
 from django.conf import settings
@@ -8,7 +9,9 @@ from common.models import TimeStampedModel
 
 
 class Notification(TimeStampedModel):
-    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notifications")
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notifications"
+    )
     subject = models.CharField(max_length=255)
     body = models.TextField()
     read_at = models.DateTimeField(null=True, blank=True)
