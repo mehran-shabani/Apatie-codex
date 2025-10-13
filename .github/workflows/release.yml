@@ -53,5 +53,5 @@ jobs:
         run: |
           CHANGELOG_FILE="CHANGELOG-${{ github.event.release.tag_name }}.md"
           echo "# Release ${{ github.event.release.tag_name }}" > "$CHANGELOG_FILE"
-          echo "\nThis file can be replaced with curated release notes." >> "$CHANGELOG_FILE"
+          printf '\nThis file can be replaced with curated release notes.\n' >> "$CHANGELOG_FILE"
           gh release upload "${{ github.event.release.tag_name }}" "$CHANGELOG_FILE" --repo "${{ github.repository }}" --clobber
