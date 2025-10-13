@@ -2,19 +2,7 @@
 
 This initiative delivers the four-step testing and monitoring plan requested for the Flutter design system. The tasks below are ordered for sequential execution and include owners, prerequisites, deliverables, and acceptance criteria.
 
-## Task 1 — Add Visual & Performance Testing Dependencies
-- **Owner:** Frontend tooling engineer
-- **Prerequisites:** Familiarity with the existing Flutter project setup and dependency management.
-- **Description:**
-  - Update `frontend/flutter_app/pubspec.yaml` by adding the `golden_toolkit`, `integration_test`, and any supporting packages required for golden tests (e.g., font assets).
-  - Run `flutter pub get` to lock dependencies and update `pubspec.lock` if present.
-  - Smoke-check the new dependency graph with `flutter test` to ensure existing tests keep passing.
-- **Deliverables:**
-  - Updated dependency definitions committed to source control.
-  - Verified lockfile and `flutter test` output attached to the change.
-- **Acceptance Criteria:**
-  - `pubspec.yaml` contains the new test dependencies without version conflicts.
-  - `flutter test` completes successfully in CI and locally.
+## 
 
 ## Task 2 — Record Golden Tests for Components & Patterns
 - **Owner:** Flutter UI engineer
