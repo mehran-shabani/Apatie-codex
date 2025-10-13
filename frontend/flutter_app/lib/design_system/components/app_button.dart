@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:apatie/design_system/components/app_component_states.dart';
 import 'package:apatie/design_system/foundations/radii.dart';
 import 'package:apatie/design_system/foundations/shadows.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
 import 'package:apatie/design_system/foundations/touch_targets.dart';
+import 'package:apatie/design_system/utils/accessibility.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class AppButton extends StatefulWidget {
   const AppButton({
@@ -109,6 +110,10 @@ class _AppButtonState extends State<AppButton> {
       disabled: !widget.enabled,
     );
 
+    final reduceMotion = AccessibilityUtils.reduceMotion(context);
+    final containerDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 160);
+
     final padding = EdgeInsets.symmetric(
       horizontal: widget.compact ? AppSpacing.md : AppSpacing.lg,
       vertical: widget.compact ? AppSpacing.xs : AppSpacing.sm,
@@ -123,8 +128,8 @@ class _AppButtonState extends State<AppButton> {
     );
 
     final child = AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      curve: Curves.easeInOut,
+      duration: containerDuration,
+      curve: reduceMotion ? Curves.linear : Curves.easeInOut,
       padding: padding,
       decoration: BoxDecoration(
         color: colors.background,
@@ -198,6 +203,7 @@ class _ButtonContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reduceMotion = AccessibilityUtils.reduceMotion(context);
     final indicator = SizedBox.square(
       dimension: 20,
       child: CircularProgressIndicator(
@@ -242,8 +248,17 @@ class _ButtonContent extends StatelessWidget {
         ),
     ];
 
+    final switchDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 160);
+
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 200),
+      duration: switchDuration,
+      transitionBuilder: (child, animation) {
+        if (reduceMotion) {
+          return child;
+        }
+        return FadeTransition(opacity: animation, child: child);
+      },
       child: Row(
         key: ValueKey<bool>(isLoading),
         mainAxisSize: MainAxisSize.min,

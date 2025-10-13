@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:apatie/design_system/components/app_component_states.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AppProgressIndicator extends StatelessWidget {
   const AppProgressIndicator({
@@ -43,9 +44,19 @@ class AppProgressIndicator extends StatelessWidget {
             minHeight: compact ? 2 : 4,
           );
 
+    final semanticValue = value != null
+        ? (() {
+            final locale = Intl.getCurrentLocale();
+            final formatter = NumberFormat.percentPattern(locale)
+              ..maximumFractionDigits = 0
+              ..minimumFractionDigits = 0;
+            return formatter.format(value!.clamp(0.0, 1.0));
+          })()
+        : null;
+
     return Semantics(
       label: semanticLabel ?? 'نشانگر پیشرفت',
-      value: value != null ? '${(value! * 100).toStringAsFixed(0)} درصد' : null,
+      value: semanticValue,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:apatie/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
+import 'package:apatie/l10n/app_localizations.dart';
 
 import 'app_router.dart';
 import 'shared/theme/app_theme.dart';
@@ -18,6 +20,7 @@ class App extends StatelessWidget {
       create: (_) => ThemeCubit(),
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
+          const defaultLocale = Locale('fa');
           return MaterialApp.router(
             title: 'Apatie Codex',
             theme: AppTheme.light(),
@@ -31,6 +34,19 @@ class App extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: AppLocalizations.supportedLocales,
+            localeListResolutionCallback: (locales, supported) {
+              final requestedLocales = locales ?? <Locale>[];
+              final resolved = requestedLocales.firstWhere(
+                (locale) => supported.any(
+                  (supportedLocale) =>
+                      supportedLocale.languageCode == locale.languageCode,
+                ),
+                orElse: () => defaultLocale,
+              );
+              Intl.defaultLocale =
+                  Intl.canonicalizedLocale(resolved.toLanguageTag());
+              return resolved;
+            },
           );
         },
       ),

@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:apatie/design_system/components/app_component_states.dart';
 import 'package:apatie/design_system/foundations/radii.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
+import 'package:apatie/design_system/foundations/touch_targets.dart';
+import 'package:apatie/design_system/utils/accessibility.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class AppOptionRow extends StatefulWidget {
   const AppOptionRow({
@@ -71,6 +73,12 @@ class _AppOptionRowState extends State<AppOptionRow> {
       vertical: widget.compact ? AppSpacing.xs : AppSpacing.sm,
     );
 
+    final reduceMotion = AccessibilityUtils.reduceMotion(context);
+    final containerDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 160);
+    final fadeDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 140);
+
     final content = Row(
       children: [
         if (widget.leading != null)
@@ -110,34 +118,46 @@ class _AppOptionRowState extends State<AppOptionRow> {
       ],
     );
 
-    final decorated = AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      curve: Curves.easeInOut,
-      padding: padding,
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: widget.compact ? AppRadii.smRadius : AppRadii.mdRadius,
-        border: Border.all(color: colors.border, width: 1),
+    final decorated = ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: widget.compact
+            ? AppTouchTargets.compactListTileHeight
+            : AppTouchTargets.listTileHeight,
+        minWidth: AppTouchTargets.minInteractiveWidth,
       ),
-      child: Stack(
-        children: [
-          AnimatedOpacity(
-            duration: const Duration(milliseconds: 200),
-            opacity: widget.isLoading ? 0.5 : 1,
-            child: content,
-          ),
-          if (widget.isLoading)
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: LinearProgressIndicator(
-                  minHeight: 2,
-                  color: colors.border,
-                  backgroundColor: colors.background,
+      child: AnimatedContainer(
+        duration: containerDuration,
+        curve: reduceMotion ? Curves.linear : Curves.easeInOut,
+        padding: padding,
+        decoration: BoxDecoration(
+          color: colors.background,
+          borderRadius: widget.compact ? AppRadii.smRadius : AppRadii.mdRadius,
+          border: Border.all(color: colors.border, width: 1),
+        ),
+        child: Stack(
+          children: [
+            AnimatedOpacity(
+              duration: fadeDuration,
+              curve: reduceMotion ? Curves.linear : Curves.easeInOut,
+              opacity: widget.isLoading ? 0.5 : 1,
+              child: content,
+            ),
+            if (widget.isLoading)
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Semantics(
+                    label: 'در حال بارگذاری گزینه',
+                    child: LinearProgressIndicator(
+                      minHeight: 2,
+                      color: colors.border,
+                      backgroundColor: colors.background,
+                    ),
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
 

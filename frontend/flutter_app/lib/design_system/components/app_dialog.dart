@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:apatie/design_system/components/app_component_states.dart';
 import 'package:apatie/design_system/foundations/radii.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
+import 'package:apatie/design_system/utils/accessibility.dart';
+import 'package:flutter/material.dart';
 
 class AppDialog extends StatelessWidget {
   const AppDialog({
@@ -58,6 +59,9 @@ class AppDialog extends StatelessWidget {
       disabled: false,
     );
     final theme = Theme.of(context);
+    final reduceMotion = AccessibilityUtils.reduceMotion(context);
+    final fadeDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 160);
 
     return Dialog(
       insetPadding: EdgeInsets.symmetric(
@@ -85,7 +89,8 @@ class AppDialog extends StatelessWidget {
                 ),
                 SizedBox(height: AppSpacing.sm),
                 AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
+                  duration: fadeDuration,
+                  curve: reduceMotion ? Curves.linear : Curves.easeInOut,
                   opacity: isLoading ? 0.5 : 1,
                   child: content,
                 ),

@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:apatie/design_system/components/app_component_states.dart';
+import 'package:apatie/design_system/components/app_button.dart';
 import 'package:apatie/design_system/foundations/radii.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
+import 'package:apatie/design_system/foundations/touch_targets.dart';
+import 'package:apatie/design_system/utils/accessibility.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class AppInputField extends StatefulWidget {
   const AppInputField({
@@ -24,6 +27,9 @@ class AppInputField extends StatefulWidget {
     this.maxLines = 1,
     this.onEventAnnounced,
     this.semanticLabel,
+    this.errorText,
+    this.onRetry,
+    this.retryLabel = 'تلاش دوباره',
   });
 
   final String label;
@@ -43,6 +49,9 @@ class AppInputField extends StatefulWidget {
   final int maxLines;
   final ValueChanged<String>? onEventAnnounced;
   final String? semanticLabel;
+  final String? errorText;
+  final VoidCallback? onRetry;
+  final String retryLabel;
 
   @override
   State<AppInputField> createState() => _AppInputFieldState();
@@ -112,51 +121,71 @@ class _AppInputFieldState extends State<AppInputField> {
       disabled: !widget.enabled,
     );
 
-    final field = TextField(
-      controller: widget.controller,
-      focusNode: _focusNode,
-      keyboardType: widget.keyboardType,
-      textInputAction: widget.textInputAction,
-      onChanged: widget.onChanged,
-      onSubmitted: widget.onSubmitted,
-      enabled: widget.enabled,
-      readOnly: widget.readOnly,
-      maxLines: widget.maxLines,
-      decoration: InputDecoration(
-        labelText: widget.label,
-        hintText: widget.placeholder,
-        helperText: widget.isLoading ? 'در حال بارگذاری داده' : widget.helperText,
-        filled: true,
-        fillColor: colors.background,
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: widget.compact ? AppSpacing.xs : AppSpacing.sm,
-        ),
-        border: _border(colors.border),
-        enabledBorder: _border(colors.border),
-        focusedBorder: _border(
-          theme.colorScheme.primary,
-          width: 2,
-        ),
-        disabledBorder: _border(colors.border.withOpacity(0.4)),
-        errorBorder: _border(theme.colorScheme.error),
-        focusedErrorBorder: _border(theme.colorScheme.error, width: 2),
-        labelStyle: theme.textTheme.bodyMedium?.copyWith(
-          color: colors.foreground,
-        ),
-        hintStyle: theme.textTheme.bodyMedium?.copyWith(
-          color: colors.foreground.withOpacity(0.7),
-        ),
-        helperStyle: theme.textTheme.bodySmall?.copyWith(
-          color: colors.foreground.withOpacity(0.7),
-        ),
+    final reduceMotion = AccessibilityUtils.reduceMotion(context);
+    final errorDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 140);
+    final hasError = widget.errorText != null;
+
+    final field = ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: AppTouchTargets.minInteractiveHeight,
+        minWidth: AppTouchTargets.minInteractiveWidth,
       ),
-      style: theme.textTheme.bodyLarge?.copyWith(color: colors.foreground),
+      child: TextField(
+        controller: widget.controller,
+        focusNode: _focusNode,
+        keyboardType: widget.keyboardType,
+        textInputAction: widget.textInputAction,
+        onChanged: widget.onChanged,
+        onSubmitted: widget.onSubmitted,
+        enabled: widget.enabled,
+        readOnly: widget.readOnly,
+        maxLines: widget.maxLines,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          hintText: widget.placeholder,
+          helperText:
+              widget.isLoading ? 'در حال بارگذاری داده' : widget.helperText,
+          filled: true,
+          fillColor: colors.background,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: widget.compact ? AppSpacing.xs : AppSpacing.sm,
+          ),
+          border: _border(colors.border),
+          enabledBorder: _border(
+            hasError ? theme.colorScheme.error : colors.border,
+          ),
+          focusedBorder: _border(
+            hasError ? theme.colorScheme.error : theme.colorScheme.primary,
+            width: 2,
+          ),
+          disabledBorder: _border(colors.border.withOpacity(0.4)),
+          labelStyle: theme.textTheme.bodyMedium?.copyWith(
+            color: colors.foreground,
+          ),
+          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+            color: colors.foreground.withOpacity(0.7),
+          ),
+          helperStyle: theme.textTheme.bodySmall?.copyWith(
+            color: colors.foreground.withOpacity(0.7),
+          ),
+        ),
+        style: theme.textTheme.bodyLarge?.copyWith(color: colors.foreground),
+      ),
     );
+
+    final semanticsHintParts = [
+      if (widget.placeholder != null) widget.placeholder!,
+      if (widget.errorText != null) 'خطا: ${widget.errorText}',
+    ];
 
     final decorated = MouseRegion(
       cursor: widget.enabled ? SystemMouseCursors.text : SystemMouseCursors.basic,
       onEnter: (_) {
+        if (!widget.enabled) {
+          return;
+        }
         setState(() => _hovered = true);
         _announce('نشانگر روی فیلد ${widget.label} قرار گرفت.');
       },
@@ -166,7 +195,8 @@ class _AppInputFieldState extends State<AppInputField> {
         textField: true,
         enabled: widget.enabled,
         value: widget.controller?.text,
-        hint: widget.placeholder,
+        hint: semanticsHintParts.isEmpty ? null : semanticsHintParts.join(' '),
+        liveRegion: widget.errorText != null,
         child: field,
       ),
     );
@@ -184,6 +214,52 @@ class _AppInputFieldState extends State<AppInputField> {
               color: theme.colorScheme.primary,
             ),
           ),
+        AnimatedSwitcher(
+          duration: errorDuration,
+          transitionBuilder: (child, animation) {
+            if (reduceMotion) {
+              return child;
+            }
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          child: widget.errorText == null
+              ? const SizedBox.shrink()
+              : Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                  child: Semantics(
+                    liveRegion: true,
+                    label: 'خطا در ورود داده',
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            widget.errorText!,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.error,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        if (widget.onRetry != null)
+                          Padding(
+                            padding:
+                                const EdgeInsetsDirectional.only(start: AppSpacing.sm),
+                            child: AppButton(
+                              label: widget.retryLabel,
+                              onPressed: widget.onRetry,
+                              tone: AppComponentStatus.warning,
+                              compact: true,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+        ),
       ],
     );
   }
