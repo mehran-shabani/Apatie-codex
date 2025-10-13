@@ -10,15 +10,11 @@ from .base import *  # noqa: F403
 from .base import ENV, SECRET_KEY, SIMPLE_JWT
 
 
-DEBUG = False
-
-
 def _resolve_secret_key() -> str:
     """Ensure a cryptographically strong SECRET_KEY is available."""
 
-    base_secret = SECRET_KEY  # Populated by ``core.settings.base``.
-    if base_secret != "change-me":
-        return base_secret
+    if SECRET_KEY != "change-me":
+        return SECRET_KEY
 
     # Try dedicated environment variable first to avoid reusing the insecure
     # development default when the deployment configuration forgets to supply
