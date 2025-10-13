@@ -13,7 +13,7 @@ django.setup()
 
 from business.models import (
     BusinessProfile,
-)  # noqa: E402  pylint: disable=wrong-import-position
+)  # pylint: disable=wrong-import-position
 
 User = get_user_model()
 
