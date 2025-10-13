@@ -155,7 +155,6 @@ REST_FRAMEWORK = {
         "anon": "60/min",
         "user": "120/min",
     },
-    "PAGE_SIZE": 10,
 }
 
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["user"] = ENV.str(
