@@ -14,7 +14,7 @@ We encourage contributors to review our [issue templates](.github/ISSUE_TEMPLATE
 
 ### Automated releases
 
-Releases are managed by [Release Please](https://github.com/google-github-actions/release-please-action) via the `Release Automation` workflow. When a pull request targeting the default `work` branch is merged, the workflow analyses commit messages and prepares a release pull request that bumps versions, updates changelogs, and tags the repository when merged. Contributors must:
+Releases are managed by [Release Please](https://github.com/google-github-actions/release-please-action) via the `Release Automation` workflow. When a pull request targeting the default `work` branch is merged, the workflow analyzes commit messages and prepares a release pull request that bumps versions, updates changelogs, and tags the repository when merged. Contributors must:
 
 * Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for every commit included in the release so Release Please can determine semantic version updates.
 * Avoid removing the `autorelease: pending` label from Release Please pull requests—this label is required for the automation to finalize the release.
