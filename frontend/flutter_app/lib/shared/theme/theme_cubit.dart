@@ -4,7 +4,10 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 class ThemeCubit extends HydratedCubit<ThemeMode> {
   ThemeCubit() : super(ThemeMode.system);
 
-  void updateTheme(ThemeMode mode) => emit(mode);
+  void updateTheme(ThemeMode mode) {
+    if (state == mode) return;
+    emit(mode);
+  }
 
   void toggleTheme() {
     switch (state) {
@@ -18,6 +21,15 @@ class ThemeCubit extends HydratedCubit<ThemeMode> {
         emit(ThemeMode.system);
         break;
     }
+  }
+
+  ThemeMode effectiveTheme(Brightness platformBrightness) {
+    if (state == ThemeMode.system) {
+      return platformBrightness == Brightness.dark
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    }
+    return state;
   }
 
   @override
