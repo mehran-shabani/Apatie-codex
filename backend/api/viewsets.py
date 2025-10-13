@@ -263,7 +263,7 @@ class PaymentTransactionViewSet(AutoModelViewSet):
         payment = self.get_object()
         gateway = self.gateway_class()
         result = gateway.charge(
-            amount=float(payment.amount),
+            amount=payment.amount,
             currency=payment.currency,
             metadata={"reference": str(payment.pk)},
         )
