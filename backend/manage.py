@@ -13,8 +13,7 @@ def main():
         # settings when running security checks such as
         # ``python manage.py check --deploy``.
         default_settings = "core.settings.dev"
-        command_args = set(sys.argv[1:])
-        if "check" in command_args and "--deploy" in command_args:
+        if "check" in sys.argv and "--deploy" in sys.argv:
             default_settings = "core.settings.prod"
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", default_settings)

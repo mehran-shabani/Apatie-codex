@@ -6,7 +6,8 @@ import secrets
 
 from django.core.exceptions import ImproperlyConfigured
 
-from .base import *  # noqa: F401,F403
+from .base import *  # noqa: F403
+from .base import ENV, SECRET_KEY, SIMPLE_JWT
 
 
 DEBUG = False
@@ -15,18 +16,15 @@ DEBUG = False
 def _resolve_secret_key() -> str:
     """Ensure a cryptographically strong SECRET_KEY is available."""
 
-    if SECRET_KEY != "change-me":
-        return SECRET_KEY
+    base_secret = SECRET_KEY  # Populated by ``core.settings.base``.
+    if base_secret != "change-me":
+        return base_secret
 
     # Try dedicated environment variable first to avoid reusing the insecure
     # development default when the deployment configuration forgets to supply
     # one.
     provided = ENV.str("DJANGO_SECRET_KEY", default=None)
     if provided:
-        return provided
-
-    provided = ENV.str("SECRET_KEY", default=None)
-    if provided and provided != "change-me":
         return provided
 
     # Fallback to a random key so that ``check --deploy`` and other
@@ -38,16 +36,18 @@ def _resolve_secret_key() -> str:
 
 SECRET_KEY = _resolve_secret_key()
 
-# Keep JWT signing key consistent with the resolved secret key to avoid
-# using the insecure development default when SECRET_KEY is regenerated.
+# Keep JWT signing key consistent with the resolved secret key to avoid using
+# the insecure development default when ``SECRET_KEY`` is regenerated for
+# deploy-time checks.
 SIMPLE_JWT["SIGNING_KEY"] = SECRET_KEY
+SIMPLE_JWT.pop("VERIFYING_KEY", None)
 
 
 DEFAULT_ALLOWED_HOSTS = ["apatie.example"]
 ALLOWED_HOSTS = ENV.list("ALLOWED_HOSTS", default=DEFAULT_ALLOWED_HOSTS)
 if not ALLOWED_HOSTS or ALLOWED_HOSTS == ["*"]:
     raise ImproperlyConfigured(
-        "ALLOWED_HOSTS must be configured with concrete domains in production."
+        "ALLOWED_HOSTS must list concrete domains in production."
     )
 
 
@@ -57,6 +57,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_HSTS_SECONDS = ENV.int("SECURE_HSTS_SECONDS", default=31536000)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
