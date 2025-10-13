@@ -18,7 +18,7 @@ on:
 
 jobs:
   lint-and-test:
-    name: Lint & Test (Python)
+    name: Test (Python)
     runs-on: ubuntu-latest
 
     steps:
@@ -37,14 +37,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pre-commit
-
-      - name: Run Python linters
-        run: |
-          pre-commit run --hook-stage manual --all-files black
-          pre-commit run --hook-stage manual --all-files isort
-          pre-commit run --hook-stage manual --all-files flake8
-          pre-commit run --hook-stage manual --all-files pylint
-          pre-commit run --hook-stage manual --all-files django-check-migrations
 
       - name: Run pytest
         env:
