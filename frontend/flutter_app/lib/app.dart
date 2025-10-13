@@ -48,14 +48,8 @@ class App extends StatelessWidget {
             },
             builder: (context, child) {
               final locale = Localizations.maybeLocaleOf(context) ?? defaultLocale;
-              Intl.defaultLocale = locale.toLanguageTag();
-              final isRtl = ui.Bidi.isRtlLanguage(locale.languageCode);
-              final resolvedChild = child ?? const SizedBox.shrink();
-
-              return Directionality(
-                textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-                child: resolvedChild,
-              );
+              Intl.defaultLocale = Intl.canonicalizedLocale(locale.toString());
+              return child ?? const SizedBox.shrink();
             },
           );
         },
