@@ -1,17 +1,7 @@
-"""Viewsets for business resources."""
+"""Business viewsets are sourced from the central API module."""
 
 from __future__ import annotations
 
-from rest_framework import permissions, viewsets
+from api.viewsets import BusinessProfileViewSet
 
-from .models import BusinessProfile
-from .serializers import BusinessProfileSerializer
-
-
-class BusinessProfileViewSet(viewsets.ModelViewSet):
-    queryset = BusinessProfile.objects.select_related("owner").all()
-    serializer_class = BusinessProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+__all__ = ["BusinessProfileViewSet"]
