@@ -61,4 +61,3 @@ CSRF_COOKIE_SAMESITE = "Lax"
 REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 USE_X_FORWARDED_HOST = True
-
