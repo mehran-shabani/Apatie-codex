@@ -12,7 +12,7 @@
     "redis",
     "backend"
   ],
-  "overrideCommand": false,
+  "overrideCommand": true,
   "forwardPorts": [8000, 5432, 6379],
   "remoteUser": "root",
   "postCreateCommand": "bash .devcontainer/post-create.sh",
