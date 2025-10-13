@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/design_system/foundations/colors.dart';
 import 'package:flutter_app/design_system/foundations/radii.dart';
+import 'package:flutter_app/design_system/foundations/semantic_colors.dart';
 import 'package:flutter_app/design_system/foundations/shadows.dart';
 import 'package:flutter_app/design_system/foundations/spacing.dart';
 import 'package:flutter_app/design_system/foundations/touch_targets.dart';
@@ -330,7 +331,7 @@ class AppTheme {
         ),
       ),
       extensions: <ThemeExtension<dynamic>>[
-        _AppSemanticStatusColors(
+        AppSemanticColors(
           success: palette.success,
           onSuccess: palette.onSuccess,
           successContainer: palette.successContainer,
@@ -345,97 +346,6 @@ class AppTheme {
           onInfoContainer: palette.onInfoContainer,
         ),
       ],
-    );
-  }
-}
-
-class _AppSemanticStatusColors extends ThemeExtension<_AppSemanticStatusColors> {
-  const _AppSemanticStatusColors({
-    required this.success,
-    required this.onSuccess,
-    required this.successContainer,
-    required this.onSuccessContainer,
-    required this.warning,
-    required this.onWarning,
-    required this.warningContainer,
-    required this.onWarningContainer,
-    required this.info,
-    required this.onInfo,
-    required this.infoContainer,
-    required this.onInfoContainer,
-  });
-
-  final Color success;
-  final Color onSuccess;
-  final Color successContainer;
-  final Color onSuccessContainer;
-  final Color warning;
-  final Color onWarning;
-  final Color warningContainer;
-  final Color onWarningContainer;
-  final Color info;
-  final Color onInfo;
-  final Color infoContainer;
-  final Color onInfoContainer;
-
-  @override
-  ThemeExtension<_AppSemanticStatusColors> copyWith({
-    Color? success,
-    Color? onSuccess,
-    Color? successContainer,
-    Color? onSuccessContainer,
-    Color? warning,
-    Color? onWarning,
-    Color? warningContainer,
-    Color? onWarningContainer,
-    Color? info,
-    Color? onInfo,
-    Color? infoContainer,
-    Color? onInfoContainer,
-  }) {
-    return _AppSemanticStatusColors(
-      success: success ?? this.success,
-      onSuccess: onSuccess ?? this.onSuccess,
-      successContainer: successContainer ?? this.successContainer,
-      onSuccessContainer: onSuccessContainer ?? this.onSuccessContainer,
-      warning: warning ?? this.warning,
-      onWarning: onWarning ?? this.onWarning,
-      warningContainer: warningContainer ?? this.warningContainer,
-      onWarningContainer: onWarningContainer ?? this.onWarningContainer,
-      info: info ?? this.info,
-      onInfo: onInfo ?? this.onInfo,
-      infoContainer: infoContainer ?? this.infoContainer,
-      onInfoContainer: onInfoContainer ?? this.onInfoContainer,
-    );
-  }
-
-  @override
-  ThemeExtension<_AppSemanticStatusColors> lerp(
-    covariant ThemeExtension<_AppSemanticStatusColors>? other,
-    double t,
-  ) {
-    if (other is! _AppSemanticStatusColors) {
-      return this;
-    }
-
-    return _AppSemanticStatusColors(
-      success: Color.lerp(success, other.success, t)!,
-      onSuccess: Color.lerp(onSuccess, other.onSuccess, t)!,
-      successContainer:
-          Color.lerp(successContainer, other.successContainer, t)!,
-      onSuccessContainer:
-          Color.lerp(onSuccessContainer, other.onSuccessContainer, t)!,
-      warning: Color.lerp(warning, other.warning, t)!,
-      onWarning: Color.lerp(onWarning, other.onWarning, t)!,
-      warningContainer:
-          Color.lerp(warningContainer, other.warningContainer, t)!,
-      onWarningContainer:
-          Color.lerp(onWarningContainer, other.onWarningContainer, t)!,
-      info: Color.lerp(info, other.info, t)!,
-      onInfo: Color.lerp(onInfo, other.onInfo, t)!,
-      infoContainer: Color.lerp(infoContainer, other.infoContainer, t)!,
-      onInfoContainer:
-          Color.lerp(onInfoContainer, other.onInfoContainer, t)!,
     );
   }
 }
