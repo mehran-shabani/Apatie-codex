@@ -12,6 +12,15 @@
 
 We encourage contributors to review our [issue templates](.github/ISSUE_TEMPLATE/) and [pull request template](.github/pull_request_template.md) before opening a ticket or submitting code. Bug reports and feature proposals should include clear summaries, reproduction steps or problem statements, expected outcomes, relevant screenshots, and acceptance criteria to help maintainers respond quickly. Pull requests should document the change summary, testing evidence, release note impact, and any deployment considerations so reviewers can merge with confidence.
 
+### Automated releases
+
+Releases are managed by [Release Please](https://github.com/google-github-actions/release-please-action) via the `Release Automation` workflow. When a pull request targeting the default `main` branch is merged, the workflow analyzes commit messages and prepares a release pull request that bumps versions, updates changelogs, and tags the repository when merged. Contributors must:
+
+* Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for every commit included in the release so Release Please can determine semantic version updates.
+* Avoid removing the `autorelease: pending` label from Release Please pull requests—this label is required for the automation to finalize the release.
+
+Once a release is published, the workflow automatically builds and pushes Docker images to the GitHub Container Registry (GHCR) using the release tag and uploads a companion changelog asset to the GitHub Release page. Ensure any required registry secrets (for example, additional credentials beyond `${{ secrets.GITHUB_TOKEN }}`) are configured in the repository settings before publishing.
+
 ### Docker Compose workflow
 
 1. Copy the provided environment templates:

@@ -1,4 +1,5 @@
 """Common serializers and utilities."""
+
 from rest_framework import serializers
 
 

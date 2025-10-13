@@ -1,4 +1,5 @@
 """User models."""
+
 from __future__ import annotations
 
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager

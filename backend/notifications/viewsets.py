@@ -1,4 +1,5 @@
 """Viewsets for notifications."""
+
 from __future__ import annotations
 
 from rest_framework import permissions, status, viewsets
@@ -30,4 +31,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             subject="Test notification",
             body="This is a mock notification.",
         )
-        return Response({"success": result.success, "message": result.message}, status=status.HTTP_200_OK)
+        return Response(
+            {"success": result.success, "message": result.message},
+            status=status.HTTP_200_OK,
+        )

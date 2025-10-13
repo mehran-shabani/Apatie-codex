@@ -1,4 +1,5 @@
 """Populate development data for local environments."""
+
 from __future__ import annotations
 
 import os
@@ -10,12 +11,21 @@ from django.db import transaction
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings.dev")
 django.setup()
 
-from business.models import BusinessProfile  # noqa: E402  pylint: disable=wrong-import-position
+from business.models import (
+    BusinessProfile,
+)  # pylint: disable=wrong-import-position
 
 User = get_user_model()
 
 
-def create_user(email: str, password: str, full_name: str, *, is_staff: bool = False, is_superuser: bool = False) -> User:
+def create_user(
+    email: str,
+    password: str,
+    full_name: str,
+    *,
+    is_staff: bool = False,
+    is_superuser: bool = False,
+) -> User:
     """Create or update a user with sensible defaults."""
     user, created = User.objects.get_or_create(
         email=email,

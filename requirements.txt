@@ -13,3 +13,5 @@ redis>=5.0
 django-guid>=3.4
 pytest>=8.0
 pytest-django>=4.7
+gunicorn>=21.2
+uvicorn[standard]>=0.30

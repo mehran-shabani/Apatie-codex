@@ -1,4 +1,5 @@
 """Payments domain models."""
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -10,7 +11,9 @@ from common.models import TimeStampedModel
 
 
 class PaymentTransaction(TimeStampedModel):
-    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, related_name="payments")
+    appointment = models.ForeignKey(
+        Appointment, on_delete=models.CASCADE, related_name="payments"
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=10, default="USD")
     status = models.CharField(max_length=20, default="pending")
