@@ -1,4 +1,5 @@
 """Services domain models."""
+
 from __future__ import annotations
 
 from django.db import models
@@ -8,7 +9,9 @@ from common.models import TimeStampedModel
 
 
 class Service(TimeStampedModel):
-    business = models.ForeignKey(BusinessProfile, on_delete=models.CASCADE, related_name="services")
+    business = models.ForeignKey(
+        BusinessProfile, on_delete=models.CASCADE, related_name="services"
+    )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     duration_minutes = models.PositiveIntegerField(default=60)

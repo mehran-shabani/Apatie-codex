@@ -1,4 +1,5 @@
 """Shared pytest fixtures for the Django backend."""
+
 from __future__ import annotations
 
 import pytest

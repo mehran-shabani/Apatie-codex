@@ -1,4 +1,5 @@
 """Serializers for payment resources."""
+
 from __future__ import annotations
 
 from rest_framework import serializers
@@ -19,4 +20,10 @@ class PaymentTransactionSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "status", "external_reference", "created_at", "updated_at"]
+        read_only_fields = [
+            "id",
+            "status",
+            "external_reference",
+            "created_at",
+            "updated_at",
+        ]
