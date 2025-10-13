@@ -44,10 +44,9 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}:v${{ github.event.release.tag_name }}
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
           docker build -t "$IMAGE_NAME" .
           docker push "$IMAGE_NAME"
-
       - name: Upload changelog asset
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
