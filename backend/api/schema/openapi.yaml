@@ -2,11 +2,70 @@ openapi: 3.0.3
 info:
   title: Apatie API
   version: 1.0.0
-  description: API specification for the Apatie platform
+  description: Comprehensive API specification for the Apatie platform.
+  contact:
+    name: Apatie
+    email: support@apatie.example
+  license:
+    name: Proprietary
 paths:
+  /api/auth/jwt/create/:
+    post:
+      operationId: api_auth_jwt_create_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/auth/jwt/refresh/:
+    post:
+      operationId: api_auth_jwt_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
   /api/v1/appointments/:
     get:
-      operationId: v1_appointments_list
+      operationId: appointments_list
       parameters:
       - name: ordering
         required: false
@@ -14,6 +73,18 @@ paths:
         description: Which field to use when ordering the results.
         schema:
           type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -21,35 +92,35 @@ paths:
         schema:
           type: string
       tags:
-      - v1
+      - appointments
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Appointment'
+                $ref: '#/components/schemas/PaginatedAppointmentList'
           description: ''
     post:
-      operationId: v1_appointments_create
+      operationId: appointments_create
       tags:
-      - v1
+      - appointments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '201':
@@ -60,7 +131,7 @@ paths:
           description: ''
   /api/v1/appointments/{id}/:
     get:
-      operationId: v1_appointments_retrieve
+      operationId: appointments_retrieve
       parameters:
       - in: path
         name: id
@@ -69,8 +140,9 @@ paths:
         description: A unique integer value identifying this appointment.
         required: true
       tags:
-      - v1
+      - appointments
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -80,7 +152,7 @@ paths:
                 $ref: '#/components/schemas/Appointment'
           description: ''
     put:
-      operationId: v1_appointments_update
+      operationId: appointments_update
       parameters:
       - in: path
         name: id
@@ -89,20 +161,21 @@ paths:
         description: A unique integer value identifying this appointment.
         required: true
       tags:
-      - v1
+      - appointments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -112,7 +185,7 @@ paths:
                 $ref: '#/components/schemas/Appointment'
           description: ''
     patch:
-      operationId: v1_appointments_partial_update
+      operationId: appointments_partial_update
       parameters:
       - in: path
         name: id
@@ -121,19 +194,20 @@ paths:
         description: A unique integer value identifying this appointment.
         required: true
       tags:
-      - v1
+      - appointments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedAppointment'
+              $ref: '#/components/schemas/PatchedAppointmentRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedAppointment'
+              $ref: '#/components/schemas/PatchedAppointmentRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedAppointment'
+              $ref: '#/components/schemas/PatchedAppointmentRequest'
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -143,7 +217,7 @@ paths:
                 $ref: '#/components/schemas/Appointment'
           description: ''
     delete:
-      operationId: v1_appointments_destroy
+      operationId: appointments_destroy
       parameters:
       - in: path
         name: id
@@ -152,15 +226,16 @@ paths:
         description: A unique integer value identifying this appointment.
         required: true
       tags:
-      - v1
+      - appointments
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '204':
           description: No response body
   /api/v1/businesses/:
     get:
-      operationId: v1_businesses_list
+      operationId: businesses_list
       parameters:
       - name: ordering
         required: false
@@ -168,6 +243,18 @@ paths:
         description: Which field to use when ordering the results.
         schema:
           type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -175,35 +262,35 @@ paths:
         schema:
           type: string
       tags:
-      - v1
+      - businesses
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BusinessProfile'
+                $ref: '#/components/schemas/PaginatedBusinessProfileList'
           description: ''
     post:
-      operationId: v1_businesses_create
+      operationId: businesses_create
       tags:
-      - v1
+      - businesses
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BusinessProfile'
+              $ref: '#/components/schemas/BusinessProfileRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/BusinessProfile'
+              $ref: '#/components/schemas/BusinessProfileRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/BusinessProfile'
+              $ref: '#/components/schemas/BusinessProfileRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '201':
@@ -214,7 +301,7 @@ paths:
           description: ''
   /api/v1/businesses/{id}/:
     get:
-      operationId: v1_businesses_retrieve
+      operationId: businesses_retrieve
       parameters:
       - in: path
         name: id
@@ -223,8 +310,9 @@ paths:
         description: A unique integer value identifying this business profile.
         required: true
       tags:
-      - v1
+      - businesses
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -234,7 +322,7 @@ paths:
                 $ref: '#/components/schemas/BusinessProfile'
           description: ''
     put:
-      operationId: v1_businesses_update
+      operationId: businesses_update
       parameters:
       - in: path
         name: id
@@ -243,20 +331,21 @@ paths:
         description: A unique integer value identifying this business profile.
         required: true
       tags:
-      - v1
+      - businesses
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BusinessProfile'
+              $ref: '#/components/schemas/BusinessProfileRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/BusinessProfile'
+              $ref: '#/components/schemas/BusinessProfileRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/BusinessProfile'
+              $ref: '#/components/schemas/BusinessProfileRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -266,7 +355,7 @@ paths:
                 $ref: '#/components/schemas/BusinessProfile'
           description: ''
     patch:
-      operationId: v1_businesses_partial_update
+      operationId: businesses_partial_update
       parameters:
       - in: path
         name: id
@@ -275,19 +364,20 @@ paths:
         description: A unique integer value identifying this business profile.
         required: true
       tags:
-      - v1
+      - businesses
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedBusinessProfile'
+              $ref: '#/components/schemas/PatchedBusinessProfileRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedBusinessProfile'
+              $ref: '#/components/schemas/PatchedBusinessProfileRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedBusinessProfile'
+              $ref: '#/components/schemas/PatchedBusinessProfileRequest'
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -297,7 +387,7 @@ paths:
                 $ref: '#/components/schemas/BusinessProfile'
           description: ''
     delete:
-      operationId: v1_businesses_destroy
+      operationId: businesses_destroy
       parameters:
       - in: path
         name: id
@@ -306,15 +396,16 @@ paths:
         description: A unique integer value identifying this business profile.
         required: true
       tags:
-      - v1
+      - businesses
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '204':
           description: No response body
   /api/v1/listings/:
     get:
-      operationId: v1_listings_list
+      operationId: listings_list
       parameters:
       - name: ordering
         required: false
@@ -322,6 +413,18 @@ paths:
         description: Which field to use when ordering the results.
         schema:
           type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -329,35 +432,35 @@ paths:
         schema:
           type: string
       tags:
-      - v1
+      - listings
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Listing'
+                $ref: '#/components/schemas/PaginatedListingList'
           description: ''
     post:
-      operationId: v1_listings_create
+      operationId: listings_create
       tags:
-      - v1
+      - listings
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Listing'
+              $ref: '#/components/schemas/ListingRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Listing'
+              $ref: '#/components/schemas/ListingRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Listing'
+              $ref: '#/components/schemas/ListingRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '201':
@@ -368,7 +471,7 @@ paths:
           description: ''
   /api/v1/listings/{id}/:
     get:
-      operationId: v1_listings_retrieve
+      operationId: listings_retrieve
       parameters:
       - in: path
         name: id
@@ -377,8 +480,9 @@ paths:
         description: A unique integer value identifying this listing.
         required: true
       tags:
-      - v1
+      - listings
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -388,7 +492,7 @@ paths:
                 $ref: '#/components/schemas/Listing'
           description: ''
     put:
-      operationId: v1_listings_update
+      operationId: listings_update
       parameters:
       - in: path
         name: id
@@ -397,20 +501,21 @@ paths:
         description: A unique integer value identifying this listing.
         required: true
       tags:
-      - v1
+      - listings
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Listing'
+              $ref: '#/components/schemas/ListingRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Listing'
+              $ref: '#/components/schemas/ListingRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Listing'
+              $ref: '#/components/schemas/ListingRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -420,7 +525,7 @@ paths:
                 $ref: '#/components/schemas/Listing'
           description: ''
     patch:
-      operationId: v1_listings_partial_update
+      operationId: listings_partial_update
       parameters:
       - in: path
         name: id
@@ -429,19 +534,20 @@ paths:
         description: A unique integer value identifying this listing.
         required: true
       tags:
-      - v1
+      - listings
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedListing'
+              $ref: '#/components/schemas/PatchedListingRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedListing'
+              $ref: '#/components/schemas/PatchedListingRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedListing'
+              $ref: '#/components/schemas/PatchedListingRequest'
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -451,7 +557,7 @@ paths:
                 $ref: '#/components/schemas/Listing'
           description: ''
     delete:
-      operationId: v1_listings_destroy
+      operationId: listings_destroy
       parameters:
       - in: path
         name: id
@@ -460,15 +566,16 @@ paths:
         description: A unique integer value identifying this listing.
         required: true
       tags:
-      - v1
+      - listings
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '204':
           description: No response body
   /api/v1/notifications/:
     get:
-      operationId: v1_notifications_list
+      operationId: notifications_list
       parameters:
       - name: ordering
         required: false
@@ -476,6 +583,18 @@ paths:
         description: Which field to use when ordering the results.
         schema:
           type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -483,35 +602,35 @@ paths:
         schema:
           type: string
       tags:
-      - v1
+      - notifications
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Notification'
+                $ref: '#/components/schemas/PaginatedNotificationList'
           description: ''
     post:
-      operationId: v1_notifications_create
+      operationId: notifications_create
       tags:
-      - v1
+      - notifications
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Notification'
+              $ref: '#/components/schemas/NotificationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Notification'
+              $ref: '#/components/schemas/NotificationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Notification'
+              $ref: '#/components/schemas/NotificationRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '201':
@@ -522,7 +641,7 @@ paths:
           description: ''
   /api/v1/notifications/{id}/:
     get:
-      operationId: v1_notifications_retrieve
+      operationId: notifications_retrieve
       parameters:
       - in: path
         name: id
@@ -531,8 +650,9 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - v1
+      - notifications
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -542,7 +662,7 @@ paths:
                 $ref: '#/components/schemas/Notification'
           description: ''
     put:
-      operationId: v1_notifications_update
+      operationId: notifications_update
       parameters:
       - in: path
         name: id
@@ -551,20 +671,21 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - v1
+      - notifications
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Notification'
+              $ref: '#/components/schemas/NotificationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Notification'
+              $ref: '#/components/schemas/NotificationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Notification'
+              $ref: '#/components/schemas/NotificationRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -574,7 +695,7 @@ paths:
                 $ref: '#/components/schemas/Notification'
           description: ''
     patch:
-      operationId: v1_notifications_partial_update
+      operationId: notifications_partial_update
       parameters:
       - in: path
         name: id
@@ -583,19 +704,20 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - v1
+      - notifications
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedNotification'
+              $ref: '#/components/schemas/PatchedNotificationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedNotification'
+              $ref: '#/components/schemas/PatchedNotificationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedNotification'
+              $ref: '#/components/schemas/PatchedNotificationRequest'
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -605,7 +727,7 @@ paths:
                 $ref: '#/components/schemas/Notification'
           description: ''
     delete:
-      operationId: v1_notifications_destroy
+      operationId: notifications_destroy
       parameters:
       - in: path
         name: id
@@ -614,30 +736,32 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - v1
+      - notifications
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '204':
           description: No response body
   /api/v1/notifications/send-test/:
     post:
-      operationId: v1_notifications_send_test_create
+      operationId: notifications_send_test_create
       tags:
-      - v1
+      - notifications
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Notification'
+              $ref: '#/components/schemas/NotificationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Notification'
+              $ref: '#/components/schemas/NotificationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Notification'
+              $ref: '#/components/schemas/NotificationRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -648,7 +772,7 @@ paths:
           description: ''
   /api/v1/payments/:
     get:
-      operationId: v1_payments_list
+      operationId: payments_list
       parameters:
       - name: ordering
         required: false
@@ -656,6 +780,18 @@ paths:
         description: Which field to use when ordering the results.
         schema:
           type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -663,35 +799,35 @@ paths:
         schema:
           type: string
       tags:
-      - v1
+      - payments
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PaymentTransaction'
+                $ref: '#/components/schemas/PaginatedPaymentTransactionList'
           description: ''
     post:
-      operationId: v1_payments_create
+      operationId: payments_create
       tags:
-      - v1
+      - payments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentTransaction'
+              $ref: '#/components/schemas/PaymentTransactionRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PaymentTransaction'
+              $ref: '#/components/schemas/PaymentTransactionRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PaymentTransaction'
+              $ref: '#/components/schemas/PaymentTransactionRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '201':
@@ -702,7 +838,7 @@ paths:
           description: ''
   /api/v1/payments/{id}/:
     get:
-      operationId: v1_payments_retrieve
+      operationId: payments_retrieve
       parameters:
       - in: path
         name: id
@@ -711,8 +847,9 @@ paths:
         description: A unique integer value identifying this payment transaction.
         required: true
       tags:
-      - v1
+      - payments
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -722,7 +859,7 @@ paths:
                 $ref: '#/components/schemas/PaymentTransaction'
           description: ''
     put:
-      operationId: v1_payments_update
+      operationId: payments_update
       parameters:
       - in: path
         name: id
@@ -731,20 +868,21 @@ paths:
         description: A unique integer value identifying this payment transaction.
         required: true
       tags:
-      - v1
+      - payments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentTransaction'
+              $ref: '#/components/schemas/PaymentTransactionRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PaymentTransaction'
+              $ref: '#/components/schemas/PaymentTransactionRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PaymentTransaction'
+              $ref: '#/components/schemas/PaymentTransactionRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -754,7 +892,7 @@ paths:
                 $ref: '#/components/schemas/PaymentTransaction'
           description: ''
     patch:
-      operationId: v1_payments_partial_update
+      operationId: payments_partial_update
       parameters:
       - in: path
         name: id
@@ -763,19 +901,20 @@ paths:
         description: A unique integer value identifying this payment transaction.
         required: true
       tags:
-      - v1
+      - payments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedPaymentTransaction'
+              $ref: '#/components/schemas/PatchedPaymentTransactionRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedPaymentTransaction'
+              $ref: '#/components/schemas/PatchedPaymentTransactionRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedPaymentTransaction'
+              $ref: '#/components/schemas/PatchedPaymentTransactionRequest'
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -785,7 +924,7 @@ paths:
                 $ref: '#/components/schemas/PaymentTransaction'
           description: ''
     delete:
-      operationId: v1_payments_destroy
+      operationId: payments_destroy
       parameters:
       - in: path
         name: id
@@ -794,15 +933,16 @@ paths:
         description: A unique integer value identifying this payment transaction.
         required: true
       tags:
-      - v1
+      - payments
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '204':
           description: No response body
   /api/v1/payments/{id}/capture/:
     post:
-      operationId: v1_payments_capture_create
+      operationId: payments_capture_create
       parameters:
       - in: path
         name: id
@@ -811,20 +951,21 @@ paths:
         description: A unique integer value identifying this payment transaction.
         required: true
       tags:
-      - v1
+      - payments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentTransaction'
+              $ref: '#/components/schemas/PaymentTransactionRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PaymentTransaction'
+              $ref: '#/components/schemas/PaymentTransactionRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PaymentTransaction'
+              $ref: '#/components/schemas/PaymentTransactionRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -835,7 +976,7 @@ paths:
           description: ''
   /api/v1/services/:
     get:
-      operationId: v1_services_list
+      operationId: services_list
       parameters:
       - name: ordering
         required: false
@@ -843,6 +984,18 @@ paths:
         description: Which field to use when ordering the results.
         schema:
           type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -850,35 +1003,35 @@ paths:
         schema:
           type: string
       tags:
-      - v1
+      - services
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Service'
+                $ref: '#/components/schemas/PaginatedServiceList'
           description: ''
     post:
-      operationId: v1_services_create
+      operationId: services_create
       tags:
-      - v1
+      - services
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Service'
+              $ref: '#/components/schemas/ServiceRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Service'
+              $ref: '#/components/schemas/ServiceRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Service'
+              $ref: '#/components/schemas/ServiceRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '201':
@@ -889,7 +1042,7 @@ paths:
           description: ''
   /api/v1/services/{id}/:
     get:
-      operationId: v1_services_retrieve
+      operationId: services_retrieve
       parameters:
       - in: path
         name: id
@@ -898,8 +1051,9 @@ paths:
         description: A unique integer value identifying this service.
         required: true
       tags:
-      - v1
+      - services
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -909,7 +1063,7 @@ paths:
                 $ref: '#/components/schemas/Service'
           description: ''
     put:
-      operationId: v1_services_update
+      operationId: services_update
       parameters:
       - in: path
         name: id
@@ -918,20 +1072,21 @@ paths:
         description: A unique integer value identifying this service.
         required: true
       tags:
-      - v1
+      - services
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Service'
+              $ref: '#/components/schemas/ServiceRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Service'
+              $ref: '#/components/schemas/ServiceRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Service'
+              $ref: '#/components/schemas/ServiceRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -941,7 +1096,7 @@ paths:
                 $ref: '#/components/schemas/Service'
           description: ''
     patch:
-      operationId: v1_services_partial_update
+      operationId: services_partial_update
       parameters:
       - in: path
         name: id
@@ -950,19 +1105,20 @@ paths:
         description: A unique integer value identifying this service.
         required: true
       tags:
-      - v1
+      - services
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedService'
+              $ref: '#/components/schemas/PatchedServiceRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedService'
+              $ref: '#/components/schemas/PatchedServiceRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedService'
+              $ref: '#/components/schemas/PatchedServiceRequest'
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -972,7 +1128,7 @@ paths:
                 $ref: '#/components/schemas/Service'
           description: ''
     delete:
-      operationId: v1_services_destroy
+      operationId: services_destroy
       parameters:
       - in: path
         name: id
@@ -981,69 +1137,16 @@ paths:
         description: A unique integer value identifying this service.
         required: true
       tags:
-      - v1
+      - services
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '204':
           description: No response body
-  /api/v1/token/:
-    post:
-      operationId: v1_token_create
-      description: |-
-        Takes a set of user credentials and returns an access and refresh JSON web
-        token pair to prove the authentication of those credentials.
-      tags:
-      - v1
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TokenObtainPair'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TokenObtainPair'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/TokenObtainPair'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenObtainPair'
-          description: ''
-  /api/v1/token/refresh/:
-    post:
-      operationId: v1_token_refresh_create
-      description: |-
-        Takes a refresh type JSON web token and returns an access type JSON web
-        token if the refresh token is valid.
-      tags:
-      - v1
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TokenRefresh'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TokenRefresh'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/TokenRefresh'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenRefresh'
-          description: ''
   /api/v1/users/:
     get:
-      operationId: v1_users_list
+      operationId: users_list
       parameters:
       - name: ordering
         required: false
@@ -1051,6 +1154,18 @@ paths:
         description: Which field to use when ordering the results.
         schema:
           type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -1058,35 +1173,35 @@ paths:
         schema:
           type: string
       tags:
-      - v1
+      - users
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/PaginatedUserList'
           description: ''
     post:
-      operationId: v1_users_create
+      operationId: users_create
       tags:
-      - v1
+      - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '201':
@@ -1097,7 +1212,7 @@ paths:
           description: ''
   /api/v1/users/{id}/:
     get:
-      operationId: v1_users_retrieve
+      operationId: users_retrieve
       parameters:
       - in: path
         name: id
@@ -1106,8 +1221,9 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - v1
+      - users
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -1117,7 +1233,7 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
     put:
-      operationId: v1_users_update
+      operationId: users_update
       parameters:
       - in: path
         name: id
@@ -1126,20 +1242,21 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - v1
+      - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequest'
         required: true
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -1149,7 +1266,7 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
     patch:
-      operationId: v1_users_partial_update
+      operationId: users_partial_update
       parameters:
       - in: path
         name: id
@@ -1158,19 +1275,20 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - v1
+      - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedUser'
+              $ref: '#/components/schemas/PatchedUserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedUser'
+              $ref: '#/components/schemas/PatchedUserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedUser'
+              $ref: '#/components/schemas/PatchedUserRequest'
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '200':
@@ -1180,7 +1298,7 @@ paths:
                 $ref: '#/components/schemas/User'
           description: ''
     delete:
-      operationId: v1_users_destroy
+      operationId: users_destroy
       parameters:
       - in: path
         name: id
@@ -1189,8 +1307,9 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - v1
+      - users
       security:
+      - cookieAuth: []
       - jwtAuth: []
       responses:
         '204':
@@ -1233,6 +1352,29 @@ components:
       - scheduled_for
       - service
       - updated_at
+    AppointmentRequest:
+      type: object
+      properties:
+        customer:
+          type: integer
+        business:
+          type: integer
+        service:
+          type: integer
+        scheduled_for:
+          type: string
+          format: date-time
+        status:
+          type: string
+          minLength: 1
+          maxLength: 50
+        notes:
+          type: string
+      required:
+      - business
+      - customer
+      - scheduled_for
+      - service
     BusinessProfile:
       type: object
       properties:
@@ -1260,6 +1402,20 @@ components:
       - name
       - owner
       - updated_at
+    BusinessProfileRequest:
+      type: object
+      properties:
+        owner:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+      required:
+      - name
+      - owner
     Listing:
       type: object
       properties:
@@ -1291,6 +1447,23 @@ components:
       - price
       - service
       - updated_at
+    ListingRequest:
+      type: object
+      properties:
+        business:
+          type: integer
+        service:
+          type: integer
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        is_active:
+          type: boolean
+      required:
+      - business
+      - price
+      - service
     Notification:
       type: object
       properties:
@@ -1325,12 +1498,186 @@ components:
       - recipient
       - subject
       - updated_at
-    PatchedAppointment:
+    NotificationRequest:
       type: object
       properties:
-        id:
+        recipient:
           type: integer
-          readOnly: true
+        subject:
+          type: string
+          minLength: 1
+          maxLength: 255
+        body:
+          type: string
+          minLength: 1
+      required:
+      - body
+      - recipient
+      - subject
+    PaginatedAppointmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Appointment'
+    PaginatedBusinessProfileList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessProfile'
+    PaginatedListingList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Listing'
+    PaginatedNotificationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+    PaginatedPaymentTransactionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentTransaction'
+    PaginatedServiceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+    PaginatedUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PatchedAppointmentRequest:
+      type: object
+      properties:
         customer:
           type: integer
         business:
@@ -1342,44 +1689,24 @@ components:
           format: date-time
         status:
           type: string
+          minLength: 1
           maxLength: 50
         notes:
           type: string
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-    PatchedBusinessProfile:
+    PatchedBusinessProfileRequest:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         owner:
           type: integer
         name:
           type: string
+          minLength: 1
           maxLength: 255
         description:
           type: string
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-    PatchedListing:
+    PatchedListingRequest:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         business:
           type: integer
         service:
@@ -1390,46 +1717,21 @@ components:
           pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
         is_active:
           type: boolean
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-    PatchedNotification:
+    PatchedNotificationRequest:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         recipient:
           type: integer
         subject:
           type: string
+          minLength: 1
           maxLength: 255
         body:
           type: string
-        read_at:
-          type: string
-          format: date-time
-          readOnly: true
-          nullable: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-    PatchedPaymentTransaction:
+          minLength: 1
+    PatchedPaymentTransactionRequest:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         appointment:
           type: integer
         amount:
@@ -1438,70 +1740,32 @@ components:
           pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
         currency:
           type: string
+          minLength: 1
           maxLength: 10
-        status:
-          type: string
-          readOnly: true
-        external_reference:
-          type: string
-          readOnly: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-    PatchedService:
+    PatchedServiceRequest:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         business:
           type: integer
         name:
           type: string
+          minLength: 1
           maxLength: 255
         description:
           type: string
         duration_minutes:
           type: integer
-          maximum: 2147483647
-          minimum: 0
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-    PatchedUser:
+    PatchedUserRequest:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         email:
           type: string
           format: email
+          minLength: 1
           maxLength: 254
         full_name:
           type: string
           maxLength: 255
-        is_active:
-          type: boolean
-          readOnly: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
     PaymentTransaction:
       type: object
       properties:
@@ -1539,6 +1803,22 @@ components:
       - id
       - status
       - updated_at
+    PaymentTransactionRequest:
+      type: object
+      properties:
+        appointment:
+          type: integer
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        currency:
+          type: string
+          minLength: 1
+          maxLength: 10
+      required:
+      - amount
+      - appointment
     Service:
       type: object
       properties:
@@ -1554,8 +1834,6 @@ components:
           type: string
         duration_minutes:
           type: integer
-          maximum: 2147483647
-          minimum: 0
         created_at:
           type: string
           format: date-time
@@ -1570,15 +1848,25 @@ components:
       - id
       - name
       - updated_at
+    ServiceRequest:
+      type: object
+      properties:
+        business:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+        duration_minutes:
+          type: integer
+      required:
+      - business
+      - name
     TokenObtainPair:
       type: object
       properties:
-        email:
-          type: string
-          writeOnly: true
-        password:
-          type: string
-          writeOnly: true
         access:
           type: string
           readOnly: true
@@ -1587,9 +1875,21 @@ components:
           readOnly: true
       required:
       - access
+      - refresh
+    TokenObtainPairRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
       - email
       - password
-      - refresh
     TokenRefresh:
       type: object
       properties:
@@ -1600,6 +1900,14 @@ components:
           type: string
       required:
       - access
+      - refresh
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
       - refresh
     User:
       type: object
@@ -1631,7 +1939,24 @@ components:
       - id
       - is_active
       - updated_at
+    UserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        full_name:
+          type: string
+          maxLength: 255
+      required:
+      - email
   securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
     jwtAuth:
       type: http
       scheme: bearer
