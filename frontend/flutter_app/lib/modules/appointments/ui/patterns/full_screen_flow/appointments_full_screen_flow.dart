@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:apatie/design_system/components/app_button.dart';
 import 'package:apatie/design_system/components/app_card.dart';
 import 'package:apatie/design_system/components/app_input_field.dart';
@@ -6,6 +5,9 @@ import 'package:apatie/design_system/components/app_list.dart';
 import 'package:apatie/design_system/components/app_progress_indicator.dart';
 import 'package:apatie/design_system/foundations/radii.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
+import 'package:apatie/design_system/utils/accessibility.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AppointmentsFullScreenFlow extends StatefulWidget {
   const AppointmentsFullScreenFlow({super.key});
@@ -197,6 +199,12 @@ class _AppointmentsFullScreenFlowState
   Widget build(BuildContext context) {
     final totalSteps = 3;
     final stepValue = (_currentStep + 1) / totalSteps;
+    final numberFormatter = NumberFormat.decimalPattern(Intl.getCurrentLocale());
+    final reduceMotion = AccessibilityUtils.reduceMotion(context);
+    final switchDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 180);
+    final currentStepLabel = numberFormatter.format(_currentStep + 1);
+    final totalStepsLabel = numberFormatter.format(totalSteps);
 
     return FocusTraversalGroup(
       child: LayoutBuilder(
@@ -227,16 +235,21 @@ class _AppointmentsFullScreenFlowState
                 AppProgressIndicator(
                   value: stepValue,
                   description:
-                      'مرحلهٔ ${_currentStep + 1} از $totalSteps با الزام پیام‌های فارسی رسمی',
+                      'مرحلهٔ $currentStepLabel از $totalStepsLabel با الزام پیام‌های فارسی رسمی',
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Expanded(
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) => FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    ),
+                    duration: switchDuration,
+                    transitionBuilder: (child, animation) {
+                      if (reduceMotion) {
+                        return child;
+                      }
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
                     child: _buildStepContent(context),
                   ),
                 ),

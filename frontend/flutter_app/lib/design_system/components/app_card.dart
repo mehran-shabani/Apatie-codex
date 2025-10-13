@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:apatie/design_system/components/app_component_states.dart';
 import 'package:apatie/design_system/foundations/radii.dart';
 import 'package:apatie/design_system/foundations/shadows.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
+import 'package:apatie/design_system/foundations/touch_targets.dart';
+import 'package:apatie/design_system/utils/accessibility.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class AppCard extends StatefulWidget {
   const AppCard({
@@ -70,6 +72,12 @@ class _AppCardState extends State<AppCard> {
       vertical: widget.compact ? AppSpacing.sm : AppSpacing.md,
     );
 
+    final reduceMotion = AccessibilityUtils.reduceMotion(context);
+    final containerDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 180);
+    final fadeDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 160);
+
     final cardBody = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -87,40 +95,50 @@ class _AppCardState extends State<AppCard> {
       ],
     );
 
-    final decorated = AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      padding: contentPadding,
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: widget.compact ? AppRadii.mdRadius : AppRadii.lgRadius,
-        border: Border.all(color: colors.border, width: 1),
-        boxShadow: _hovered || _focused ? _shadows(context).level1 : null,
+    final decorated = ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: AppTouchTargets.minimumHeight,
+        minWidth: AppTouchTargets.minInteractiveWidth,
       ),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
-              opacity: widget.isLoading ? 0.5 : 1,
-              child: cardBody,
-            ),
-          ),
-          if (widget.isLoading)
+      child: AnimatedContainer(
+        duration: containerDuration,
+        curve: reduceMotion ? Curves.linear : Curves.easeInOut,
+        padding: contentPadding,
+        decoration: BoxDecoration(
+          color: colors.background,
+          borderRadius: widget.compact ? AppRadii.mdRadius : AppRadii.lgRadius,
+          border: Border.all(color: colors.border, width: 1),
+          boxShadow: _hovered || _focused ? _shadows(context).level1 : null,
+        ),
+        child: Stack(
+          children: [
             Positioned.fill(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.sm),
-                  child: LinearProgressIndicator(
-                    minHeight: 2,
-                    backgroundColor: colors.background,
-                    color: theme.colorScheme.primary,
+              child: AnimatedOpacity(
+                duration: fadeDuration,
+                curve: reduceMotion ? Curves.linear : Curves.easeInOut,
+                opacity: widget.isLoading ? 0.5 : 1,
+                child: cardBody,
+              ),
+            ),
+            if (widget.isLoading)
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.sm),
+                    child: Semantics(
+                      label: 'در حال بارگذاری کارت',
+                      child: LinearProgressIndicator(
+                        minHeight: 2,
+                        backgroundColor: colors.background,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
 

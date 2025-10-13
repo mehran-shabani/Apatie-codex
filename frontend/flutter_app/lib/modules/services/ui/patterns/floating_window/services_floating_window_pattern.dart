@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:apatie/design_system/components/app_button.dart';
 import 'package:apatie/design_system/components/app_card.dart';
 import 'package:apatie/design_system/components/app_component_states.dart';
@@ -6,6 +5,8 @@ import 'package:apatie/design_system/components/app_label.dart';
 import 'package:apatie/design_system/components/app_progress_indicator.dart';
 import 'package:apatie/design_system/foundations/radii.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
+import 'package:apatie/design_system/utils/accessibility.dart';
+import 'package:flutter/material.dart';
 
 class ServicesFloatingWindowPattern extends StatefulWidget {
   const ServicesFloatingWindowPattern({super.key});
@@ -35,6 +36,9 @@ class _ServicesFloatingWindowPatternState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final reduceMotion = AccessibilityUtils.reduceMotion(context);
+    final windowAnimationDuration =
+        AccessibilityUtils.motionAwareDuration(context, milliseconds: 180);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -91,7 +95,8 @@ class _ServicesFloatingWindowPatternState
                   container: true,
                   label: 'پنجرهٔ شناور برای پایش زنده',
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                    duration: windowAnimationDuration,
+                    curve: reduceMotion ? Curves.linear : Curves.easeInOut,
                     width: windowWidth,
                     height: windowHeight,
                     padding: const EdgeInsets.all(AppSpacing.md),
