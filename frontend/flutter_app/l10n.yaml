@@ -3,6 +3,6 @@ template-arb-file: app_en.arb
 default-template-type: arb
 generated-class: AppLocalizations
 output-localization-file: app_localizations.dart
-synthetic-package: true
+output-dir: lib/l10n
 nullable-getter: false
 untranslated-messages-file: untranslated_messages.txt

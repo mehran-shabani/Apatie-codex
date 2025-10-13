@@ -7,6 +7,7 @@ class AppTouchTargets {
 
   static const Size minimumSize = Size(48, 48);
   static const double minimumHeight = 48;
+  static const double minInteractiveHeight = minimumHeight;
   static const double minInteractiveWidth = 48;
   static const double comfortableHeight = 56;
   static const double toolbarHeight = 64;

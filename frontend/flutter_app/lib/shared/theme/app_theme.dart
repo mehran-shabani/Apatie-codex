@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/design_system/foundations/colors.dart';
 import 'package:flutter_app/design_system/foundations/radii.dart';
@@ -63,7 +65,7 @@ class AppTheme {
         titleTextStyle: textTheme.titleLarge,
         surfaceTintColor: colorScheme.surfaceTint,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         margin: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
@@ -77,7 +79,7 @@ class AppTheme {
         color: colorScheme.surface,
         surfaceTintColor: colorScheme.surfaceTint,
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: colorScheme.surface,
         surfaceTintColor: colorScheme.surfaceTint,
         titleTextStyle: textTheme.titleLarge,
@@ -241,7 +243,7 @@ class AppTheme {
         surfaceTintColor: colorScheme.surfaceTint,
         labelTextStyle: MaterialStateProperty.all(textTheme.labelMedium),
       ),
-      bottomAppBarTheme: BottomAppBarTheme(
+      bottomAppBarTheme: BottomAppBarThemeData(
         color: colorScheme.surface,
         elevation: 0,
         surfaceTintColor: colorScheme.surfaceTint,
@@ -349,3 +351,4 @@ class AppTheme {
     );
   }
 }
+

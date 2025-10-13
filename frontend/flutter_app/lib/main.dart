@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,14 +11,15 @@ Future<void> main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    final storage = await HydratedStorage.build(
-      storageDirectory: await getApplicationSupportDirectory(),
+    HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: kIsWeb
+          ? HydratedStorageDirectory.web
+          : HydratedStorageDirectory(
+              (await getApplicationSupportDirectory()).path,
+            ),
     );
 
-    HydratedBlocOverrides.runZoned(
-      () => runApp(App()),
-      storage: storage,
-    );
+    runApp(App());
   }, (error, stack) {
     // TODO: Log errors to a remote service (e.g., Sentry, Firebase Crashlytics)
     debugPrint('Caught unhandled error: $error');

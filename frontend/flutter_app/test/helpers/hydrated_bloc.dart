@@ -3,6 +3,14 @@ import 'package:mocktail/mocktail.dart';
 
 class MockHydratedStorage extends Mock implements HydratedStorage {}
 
+Storage? _tryGetCurrentStorage() {
+  try {
+    return HydratedBloc.storage;
+  } catch (_) {
+    return null;
+  }
+}
+
 HydratedStorage buildMockHydratedStorage({
   Map<String, dynamic>? storageValues,
 }) {
@@ -22,10 +30,16 @@ HydratedStorage buildMockHydratedStorage({
 Future<T> runHydrated<T>(
   Future<T> Function() body, {
   Map<String, dynamic>? storageValues,
-}) {
-  final storage = buildMockHydratedStorage(storageValues: storageValues);
-  return HydratedBlocOverrides.runZoned<Future<T>>(
-    body,
-    storage: storage,
-  );
+  HydratedStorage? storage,
+}) async {
+  final effectiveStorage =
+      storage ?? buildMockHydratedStorage(storageValues: storageValues);
+  final previousStorage = _tryGetCurrentStorage();
+
+  HydratedBloc.storage = effectiveStorage;
+  try {
+    return await body();
+  } finally {
+    HydratedBloc.storage = previousStorage;
+  }
 }

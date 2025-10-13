@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:flutter_app/l10n/app_localizations.dart';
 import 'package:flutter_app/shared/layout/app_shell.dart';
 import 'package:flutter_app/shared/theme/app_theme.dart';
 import 'package:flutter_app/shared/theme/theme_cubit.dart';
@@ -16,15 +16,16 @@ class _TestNavigationShell extends StatefulWidget
   const _TestNavigationShell({
     required this.currentIndexNotifier,
     required this.onGoBranch,
-    this.child = const SizedBox.shrink(),
   });
 
   final ValueNotifier<int> currentIndexNotifier;
   final void Function(int index, {bool initialLocation}) onGoBranch;
-  final Widget child;
 
   @override
   int get currentIndex => currentIndexNotifier.value;
+
+  @override
+  List<StatefulShellBranch> get debugLoadedBranches => const [];
 
   @override
   ShellRouteContext get shellRouteContext => throw UnimplementedError();
@@ -56,7 +57,7 @@ class _TestNavigationShellState extends State<_TestNavigationShell> {
       builder: (context, index, _) {
         return KeyedSubtree(
           key: ValueKey('test-shell-$index'),
-          child: widget.child,
+          child: const SizedBox.shrink(),
         );
       },
     );

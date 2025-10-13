@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_app/l10n/app_localizations.dart';
 
 class ServicesPage extends StatelessWidget {
   const ServicesPage({super.key});
@@ -9,7 +9,7 @@ class ServicesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context);
 
     return Center(
       child: Text(

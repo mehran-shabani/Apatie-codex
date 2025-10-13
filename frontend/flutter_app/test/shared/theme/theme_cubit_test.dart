@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:flutter_app/shared/theme/theme_cubit.dart';
@@ -10,30 +9,26 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('ThemeCubit', () {
-    test('starts with system theme', () {
-      final storage = buildMockHydratedStorage();
-      final cubit = HydratedBlocOverrides.runZoned<ThemeCubit>(
-        ThemeCubit.new,
-        storage: storage,
-      );
-      addTearDown(cubit.close);
+    test('starts with system theme', () async {
+      await runHydrated(() async {
+        final cubit = ThemeCubit();
+        addTearDown(cubit.close);
 
-      expect(cubit.state, equals(ThemeMode.system));
+        expect(cubit.state, equals(ThemeMode.system));
+      }, storage: buildMockHydratedStorage());
     });
 
-    test('toggles between light and dark themes', () {
-      final storage = buildMockHydratedStorage();
-      final cubit = HydratedBlocOverrides.runZoned<ThemeCubit>(
-        ThemeCubit.new,
-        storage: storage,
-      );
-      addTearDown(cubit.close);
+    test('toggles between light and dark themes', () async {
+      await runHydrated(() async {
+        final cubit = ThemeCubit();
+        addTearDown(cubit.close);
 
-      cubit.toggleTheme();
-      expect(cubit.state, equals(ThemeMode.dark));
+        cubit.toggleTheme();
+        expect(cubit.state, equals(ThemeMode.dark));
 
-      cubit.toggleTheme();
-      expect(cubit.state, equals(ThemeMode.light));
+        cubit.toggleTheme();
+        expect(cubit.state, equals(ThemeMode.light));
+      }, storage: buildMockHydratedStorage());
     });
 
     test('restores persisted theme mode from storage', () async {
@@ -47,19 +42,18 @@ void main() {
       });
     });
 
-    test('persists theme mode changes to storage', () {
+    test('persists theme mode changes to storage', () async {
       final storage = buildMockHydratedStorage();
-      final cubit = HydratedBlocOverrides.runZoned<ThemeCubit>(
-        ThemeCubit.new,
-        storage: storage,
-      );
-      addTearDown(cubit.close);
+      late ThemeCubit cubit;
 
-      cubit.updateTheme(ThemeMode.dark);
+      await runHydrated(() async {
+        cubit = ThemeCubit();
+        addTearDown(cubit.close);
 
-      verify(
-        () => storage.write('ThemeCubit', {'themeMode': 'dark'}),
-      ).called(1);
+        cubit.updateTheme(ThemeMode.dark);
+      }, storage: storage);
+
+      verify(() => storage.write('ThemeCubit', {'themeMode': 'dark'})).called(1);
     });
   });
 }
