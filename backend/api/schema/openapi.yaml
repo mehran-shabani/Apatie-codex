@@ -12,9 +12,10 @@ paths:
   /api/auth/jwt/create/:
     post:
       operationId: api_auth_jwt_create_create
-      description: |-
-        Takes a set of user credentials and returns an access and refresh JSON web
-        token pair to prove the authentication of those credentials.
+      description: 'Takes a set of user credentials and returns an access and refresh
+        JSON web
+
+        token pair to prove the authentication of those credentials.'
       tags:
       - api
       requestBody:
@@ -39,9 +40,10 @@ paths:
   /api/auth/jwt/refresh/:
     post:
       operationId: api_auth_jwt_refresh_create
-      description: |-
-        Takes a refresh type JSON web token and returns an access type JSON web
-        token if the refresh token is valid.
+      description: 'Takes a refresh type JSON web token and returns an access type
+        JSON web
+
+        token if the refresh token is valid.'
       tags:
       - api
       requestBody:
@@ -66,6 +68,7 @@ paths:
   /api/v1/appointments/:
     get:
       operationId: appointments_list
+      description: Viewset for appointments.
       parameters:
       - name: ordering
         required: false
@@ -101,23 +104,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedAppointmentList'
+                $ref: '#/components/schemas/PaginatedAppointmentAutoList'
           description: ''
     post:
       operationId: appointments_create
+      description: Viewset for appointments.
       tags:
       - appointments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AppointmentRequest'
+              $ref: '#/components/schemas/AppointmentAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AppointmentRequest'
+              $ref: '#/components/schemas/AppointmentAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AppointmentRequest'
+              $ref: '#/components/schemas/AppointmentAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -127,17 +131,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Appointment'
+                $ref: '#/components/schemas/AppointmentAuto'
           description: ''
   /api/v1/appointments/{id}/:
     get:
       operationId: appointments_retrieve
+      description: Viewset for appointments.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this appointment.
+          type: string
         required: true
       tags:
       - appointments
@@ -149,16 +153,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Appointment'
+                $ref: '#/components/schemas/AppointmentAuto'
           description: ''
     put:
       operationId: appointments_update
+      description: Viewset for appointments.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this appointment.
+          type: string
         required: true
       tags:
       - appointments
@@ -166,13 +170,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AppointmentRequest'
+              $ref: '#/components/schemas/AppointmentAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AppointmentRequest'
+              $ref: '#/components/schemas/AppointmentAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AppointmentRequest'
+              $ref: '#/components/schemas/AppointmentAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -182,16 +186,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Appointment'
+                $ref: '#/components/schemas/AppointmentAuto'
           description: ''
     patch:
       operationId: appointments_partial_update
+      description: Viewset for appointments.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this appointment.
+          type: string
         required: true
       tags:
       - appointments
@@ -199,13 +203,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedAppointmentRequest'
+              $ref: '#/components/schemas/PatchedAppointmentAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedAppointmentRequest'
+              $ref: '#/components/schemas/PatchedAppointmentAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedAppointmentRequest'
+              $ref: '#/components/schemas/PatchedAppointmentAutoRequest'
       security:
       - cookieAuth: []
       - jwtAuth: []
@@ -214,16 +218,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Appointment'
+                $ref: '#/components/schemas/AppointmentAuto'
           description: ''
     delete:
       operationId: appointments_destroy
+      description: Viewset for appointments.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this appointment.
+          type: string
         required: true
       tags:
       - appointments
@@ -236,13 +240,35 @@ paths:
   /api/v1/businesses/:
     get:
       operationId: businesses_list
+      description: Viewset for business profiles.
       parameters:
+      - in: query
+        name: created_at
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: name
+        schema:
+          type: string
       - name: ordering
         required: false
         in: query
         description: Which field to use when ordering the results.
         schema:
           type: string
+      - in: query
+        name: owner
+        schema:
+          type: integer
       - name: page
         required: false
         in: query
@@ -261,6 +287,11 @@ paths:
         description: A search term.
         schema:
           type: string
+      - in: query
+        name: updated_at
+        schema:
+          type: string
+          format: date-time
       tags:
       - businesses
       security:
@@ -271,23 +302,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedBusinessProfileList'
+                $ref: '#/components/schemas/PaginatedBusinessProfileAutoList'
           description: ''
     post:
       operationId: businesses_create
+      description: Viewset for business profiles.
       tags:
       - businesses
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BusinessProfileRequest'
+              $ref: '#/components/schemas/BusinessProfileAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/BusinessProfileRequest'
+              $ref: '#/components/schemas/BusinessProfileAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/BusinessProfileRequest'
+              $ref: '#/components/schemas/BusinessProfileAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -297,11 +329,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BusinessProfile'
+                $ref: '#/components/schemas/BusinessProfileAuto'
           description: ''
   /api/v1/businesses/{id}/:
     get:
       operationId: businesses_retrieve
+      description: Viewset for business profiles.
       parameters:
       - in: path
         name: id
@@ -319,10 +352,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BusinessProfile'
+                $ref: '#/components/schemas/BusinessProfileAuto'
           description: ''
     put:
       operationId: businesses_update
+      description: Viewset for business profiles.
       parameters:
       - in: path
         name: id
@@ -336,13 +370,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BusinessProfileRequest'
+              $ref: '#/components/schemas/BusinessProfileAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/BusinessProfileRequest'
+              $ref: '#/components/schemas/BusinessProfileAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/BusinessProfileRequest'
+              $ref: '#/components/schemas/BusinessProfileAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -352,10 +386,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BusinessProfile'
+                $ref: '#/components/schemas/BusinessProfileAuto'
           description: ''
     patch:
       operationId: businesses_partial_update
+      description: Viewset for business profiles.
       parameters:
       - in: path
         name: id
@@ -369,13 +404,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedBusinessProfileRequest'
+              $ref: '#/components/schemas/PatchedBusinessProfileAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedBusinessProfileRequest'
+              $ref: '#/components/schemas/PatchedBusinessProfileAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedBusinessProfileRequest'
+              $ref: '#/components/schemas/PatchedBusinessProfileAutoRequest'
       security:
       - cookieAuth: []
       - jwtAuth: []
@@ -384,10 +419,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BusinessProfile'
+                $ref: '#/components/schemas/BusinessProfileAuto'
           description: ''
     delete:
       operationId: businesses_destroy
+      description: Viewset for business profiles.
       parameters:
       - in: path
         name: id
@@ -406,6 +442,7 @@ paths:
   /api/v1/listings/:
     get:
       operationId: listings_list
+      description: Viewset for marketplace listings.
       parameters:
       - name: ordering
         required: false
@@ -441,23 +478,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedListingList'
+                $ref: '#/components/schemas/PaginatedListingAutoList'
           description: ''
     post:
       operationId: listings_create
+      description: Viewset for marketplace listings.
       tags:
       - listings
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ListingRequest'
+              $ref: '#/components/schemas/ListingAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/ListingRequest'
+              $ref: '#/components/schemas/ListingAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ListingRequest'
+              $ref: '#/components/schemas/ListingAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -467,17 +505,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Listing'
+                $ref: '#/components/schemas/ListingAuto'
           description: ''
   /api/v1/listings/{id}/:
     get:
       operationId: listings_retrieve
+      description: Viewset for marketplace listings.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this listing.
+          type: string
         required: true
       tags:
       - listings
@@ -489,16 +527,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Listing'
+                $ref: '#/components/schemas/ListingAuto'
           description: ''
     put:
       operationId: listings_update
+      description: Viewset for marketplace listings.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this listing.
+          type: string
         required: true
       tags:
       - listings
@@ -506,13 +544,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ListingRequest'
+              $ref: '#/components/schemas/ListingAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/ListingRequest'
+              $ref: '#/components/schemas/ListingAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ListingRequest'
+              $ref: '#/components/schemas/ListingAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -522,16 +560,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Listing'
+                $ref: '#/components/schemas/ListingAuto'
           description: ''
     patch:
       operationId: listings_partial_update
+      description: Viewset for marketplace listings.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this listing.
+          type: string
         required: true
       tags:
       - listings
@@ -539,13 +577,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedListingRequest'
+              $ref: '#/components/schemas/PatchedListingAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedListingRequest'
+              $ref: '#/components/schemas/PatchedListingAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedListingRequest'
+              $ref: '#/components/schemas/PatchedListingAutoRequest'
       security:
       - cookieAuth: []
       - jwtAuth: []
@@ -554,16 +592,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Listing'
+                $ref: '#/components/schemas/ListingAuto'
           description: ''
     delete:
       operationId: listings_destroy
+      description: Viewset for marketplace listings.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this listing.
+          type: string
         required: true
       tags:
       - listings
@@ -576,6 +614,7 @@ paths:
   /api/v1/notifications/:
     get:
       operationId: notifications_list
+      description: Viewset for user notifications.
       parameters:
       - name: ordering
         required: false
@@ -611,23 +650,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedNotificationList'
+                $ref: '#/components/schemas/PaginatedNotificationAutoList'
           description: ''
     post:
       operationId: notifications_create
+      description: Viewset for user notifications.
       tags:
       - notifications
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NotificationRequest'
+              $ref: '#/components/schemas/NotificationAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/NotificationRequest'
+              $ref: '#/components/schemas/NotificationAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/NotificationRequest'
+              $ref: '#/components/schemas/NotificationAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -637,17 +677,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Notification'
+                $ref: '#/components/schemas/NotificationAuto'
           description: ''
   /api/v1/notifications/{id}/:
     get:
       operationId: notifications_retrieve
+      description: Viewset for user notifications.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this notification.
+          type: string
         required: true
       tags:
       - notifications
@@ -659,16 +699,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Notification'
+                $ref: '#/components/schemas/NotificationAuto'
           description: ''
     put:
       operationId: notifications_update
+      description: Viewset for user notifications.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this notification.
+          type: string
         required: true
       tags:
       - notifications
@@ -676,13 +716,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NotificationRequest'
+              $ref: '#/components/schemas/NotificationAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/NotificationRequest'
+              $ref: '#/components/schemas/NotificationAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/NotificationRequest'
+              $ref: '#/components/schemas/NotificationAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -692,16 +732,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Notification'
+                $ref: '#/components/schemas/NotificationAuto'
           description: ''
     patch:
       operationId: notifications_partial_update
+      description: Viewset for user notifications.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this notification.
+          type: string
         required: true
       tags:
       - notifications
@@ -709,13 +749,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedNotificationRequest'
+              $ref: '#/components/schemas/PatchedNotificationAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedNotificationRequest'
+              $ref: '#/components/schemas/PatchedNotificationAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedNotificationRequest'
+              $ref: '#/components/schemas/PatchedNotificationAutoRequest'
       security:
       - cookieAuth: []
       - jwtAuth: []
@@ -724,16 +764,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Notification'
+                $ref: '#/components/schemas/NotificationAuto'
           description: ''
     delete:
       operationId: notifications_destroy
+      description: Viewset for user notifications.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this notification.
+          type: string
         required: true
       tags:
       - notifications
@@ -746,19 +786,20 @@ paths:
   /api/v1/notifications/send-test/:
     post:
       operationId: notifications_send_test_create
+      description: Viewset for user notifications.
       tags:
       - notifications
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NotificationRequest'
+              $ref: '#/components/schemas/NotificationAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/NotificationRequest'
+              $ref: '#/components/schemas/NotificationAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/NotificationRequest'
+              $ref: '#/components/schemas/NotificationAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -768,12 +809,38 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Notification'
+                $ref: '#/components/schemas/NotificationAuto'
           description: ''
   /api/v1/payments/:
     get:
       operationId: payments_list
+      description: Viewset for payment transactions.
       parameters:
+      - in: query
+        name: amount
+        schema:
+          type: number
+      - in: query
+        name: appointment
+        schema:
+          type: integer
+      - in: query
+        name: created_at
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: currency
+        schema:
+          type: string
+      - in: query
+        name: external_reference
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
       - name: ordering
         required: false
         in: query
@@ -798,6 +865,15 @@ paths:
         description: A search term.
         schema:
           type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+      - in: query
+        name: updated_at
+        schema:
+          type: string
+          format: date-time
       tags:
       - payments
       security:
@@ -808,23 +884,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedPaymentTransactionList'
+                $ref: '#/components/schemas/PaginatedPaymentTransactionAutoList'
           description: ''
     post:
       operationId: payments_create
+      description: Viewset for payment transactions.
       tags:
       - payments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentTransactionRequest'
+              $ref: '#/components/schemas/PaymentTransactionAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PaymentTransactionRequest'
+              $ref: '#/components/schemas/PaymentTransactionAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PaymentTransactionRequest'
+              $ref: '#/components/schemas/PaymentTransactionAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -834,11 +911,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaymentTransaction'
+                $ref: '#/components/schemas/PaymentTransactionAuto'
           description: ''
   /api/v1/payments/{id}/:
     get:
       operationId: payments_retrieve
+      description: Viewset for payment transactions.
       parameters:
       - in: path
         name: id
@@ -856,10 +934,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaymentTransaction'
+                $ref: '#/components/schemas/PaymentTransactionAuto'
           description: ''
     put:
       operationId: payments_update
+      description: Viewset for payment transactions.
       parameters:
       - in: path
         name: id
@@ -873,13 +952,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentTransactionRequest'
+              $ref: '#/components/schemas/PaymentTransactionAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PaymentTransactionRequest'
+              $ref: '#/components/schemas/PaymentTransactionAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PaymentTransactionRequest'
+              $ref: '#/components/schemas/PaymentTransactionAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -889,10 +968,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaymentTransaction'
+                $ref: '#/components/schemas/PaymentTransactionAuto'
           description: ''
     patch:
       operationId: payments_partial_update
+      description: Viewset for payment transactions.
       parameters:
       - in: path
         name: id
@@ -906,13 +986,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedPaymentTransactionRequest'
+              $ref: '#/components/schemas/PatchedPaymentTransactionAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedPaymentTransactionRequest'
+              $ref: '#/components/schemas/PatchedPaymentTransactionAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedPaymentTransactionRequest'
+              $ref: '#/components/schemas/PatchedPaymentTransactionAutoRequest'
       security:
       - cookieAuth: []
       - jwtAuth: []
@@ -921,10 +1001,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaymentTransaction'
+                $ref: '#/components/schemas/PaymentTransactionAuto'
           description: ''
     delete:
       operationId: payments_destroy
+      description: Viewset for payment transactions.
       parameters:
       - in: path
         name: id
@@ -943,6 +1024,7 @@ paths:
   /api/v1/payments/{id}/capture/:
     post:
       operationId: payments_capture_create
+      description: Viewset for payment transactions.
       parameters:
       - in: path
         name: id
@@ -956,13 +1038,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentTransactionRequest'
+              $ref: '#/components/schemas/PaymentTransactionAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PaymentTransactionRequest'
+              $ref: '#/components/schemas/PaymentTransactionAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PaymentTransactionRequest'
+              $ref: '#/components/schemas/PaymentTransactionAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -972,11 +1054,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaymentTransaction'
+                $ref: '#/components/schemas/PaymentTransactionAuto'
           description: ''
   /api/v1/services/:
     get:
       operationId: services_list
+      description: Viewset for services offered by businesses.
       parameters:
       - name: ordering
         required: false
@@ -1012,23 +1095,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedServiceList'
+                $ref: '#/components/schemas/PaginatedServiceAutoList'
           description: ''
     post:
       operationId: services_create
+      description: Viewset for services offered by businesses.
       tags:
       - services
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServiceRequest'
+              $ref: '#/components/schemas/ServiceAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/ServiceRequest'
+              $ref: '#/components/schemas/ServiceAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ServiceRequest'
+              $ref: '#/components/schemas/ServiceAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -1038,17 +1122,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Service'
+                $ref: '#/components/schemas/ServiceAuto'
           description: ''
   /api/v1/services/{id}/:
     get:
       operationId: services_retrieve
+      description: Viewset for services offered by businesses.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this service.
+          type: string
         required: true
       tags:
       - services
@@ -1060,16 +1144,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Service'
+                $ref: '#/components/schemas/ServiceAuto'
           description: ''
     put:
       operationId: services_update
+      description: Viewset for services offered by businesses.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this service.
+          type: string
         required: true
       tags:
       - services
@@ -1077,13 +1161,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServiceRequest'
+              $ref: '#/components/schemas/ServiceAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/ServiceRequest'
+              $ref: '#/components/schemas/ServiceAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ServiceRequest'
+              $ref: '#/components/schemas/ServiceAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -1093,16 +1177,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Service'
+                $ref: '#/components/schemas/ServiceAuto'
           description: ''
     patch:
       operationId: services_partial_update
+      description: Viewset for services offered by businesses.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this service.
+          type: string
         required: true
       tags:
       - services
@@ -1110,13 +1194,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedServiceRequest'
+              $ref: '#/components/schemas/PatchedServiceAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedServiceRequest'
+              $ref: '#/components/schemas/PatchedServiceAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedServiceRequest'
+              $ref: '#/components/schemas/PatchedServiceAutoRequest'
       security:
       - cookieAuth: []
       - jwtAuth: []
@@ -1125,16 +1209,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Service'
+                $ref: '#/components/schemas/ServiceAuto'
           description: ''
     delete:
       operationId: services_destroy
+      description: Viewset for services offered by businesses.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this service.
+          type: string
         required: true
       tags:
       - services
@@ -1147,7 +1231,29 @@ paths:
   /api/v1/users/:
     get:
       operationId: users_list
+      description: Viewset for user accounts.
       parameters:
+      - in: query
+        name: created_at
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: email
+        schema:
+          type: string
+      - in: query
+        name: full_name
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
       - name: ordering
         required: false
         in: query
@@ -1172,6 +1278,11 @@ paths:
         description: A search term.
         schema:
           type: string
+      - in: query
+        name: updated_at
+        schema:
+          type: string
+          format: date-time
       tags:
       - users
       security:
@@ -1182,23 +1293,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedUserList'
+                $ref: '#/components/schemas/PaginatedUserAutoList'
           description: ''
     post:
       operationId: users_create
+      description: Viewset for user accounts.
       tags:
       - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/UserAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/UserAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/UserAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -1208,11 +1320,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserAuto'
           description: ''
   /api/v1/users/{id}/:
     get:
       operationId: users_retrieve
+      description: Viewset for user accounts.
       parameters:
       - in: path
         name: id
@@ -1230,10 +1343,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserAuto'
           description: ''
     put:
       operationId: users_update
+      description: Viewset for user accounts.
       parameters:
       - in: path
         name: id
@@ -1247,13 +1361,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/UserAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/UserAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/UserAutoRequest'
         required: true
       security:
       - cookieAuth: []
@@ -1263,10 +1377,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserAuto'
           description: ''
     patch:
       operationId: users_partial_update
+      description: Viewset for user accounts.
       parameters:
       - in: path
         name: id
@@ -1280,13 +1395,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedUserRequest'
+              $ref: '#/components/schemas/PatchedUserAutoRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedUserRequest'
+              $ref: '#/components/schemas/PatchedUserAutoRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedUserRequest'
+              $ref: '#/components/schemas/PatchedUserAutoRequest'
       security:
       - cookieAuth: []
       - jwtAuth: []
@@ -1295,10 +1410,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserAuto'
           description: ''
     delete:
       operationId: users_destroy
+      description: Viewset for user accounts.
       parameters:
       - in: path
         name: id
@@ -1316,7 +1432,7 @@ paths:
           description: No response body
 components:
   schemas:
-    Appointment:
+    AppointmentAuto:
       type: object
       properties:
         id:
@@ -1352,7 +1468,7 @@ components:
       - scheduled_for
       - service
       - updated_at
-    AppointmentRequest:
+    AppointmentAutoRequest:
       type: object
       properties:
         customer:
@@ -1375,7 +1491,7 @@ components:
       - customer
       - scheduled_for
       - service
-    BusinessProfile:
+    BusinessProfileAuto:
       type: object
       properties:
         id:
@@ -1383,6 +1499,7 @@ components:
           readOnly: true
         owner:
           type: integer
+          readOnly: true
         name:
           type: string
           maxLength: 255
@@ -1402,11 +1519,9 @@ components:
       - name
       - owner
       - updated_at
-    BusinessProfileRequest:
+    BusinessProfileAutoRequest:
       type: object
       properties:
-        owner:
-          type: integer
         name:
           type: string
           minLength: 1
@@ -1415,8 +1530,7 @@ components:
           type: string
       required:
       - name
-      - owner
-    Listing:
+    ListingAuto:
       type: object
       properties:
         id:
@@ -1447,7 +1561,7 @@ components:
       - price
       - service
       - updated_at
-    ListingRequest:
+    ListingAutoRequest:
       type: object
       properties:
         business:
@@ -1464,7 +1578,7 @@ components:
       - business
       - price
       - service
-    Notification:
+    NotificationAuto:
       type: object
       properties:
         id:
@@ -1498,7 +1612,7 @@ components:
       - recipient
       - subject
       - updated_at
-    NotificationRequest:
+    NotificationAutoRequest:
       type: object
       properties:
         recipient:
@@ -1514,7 +1628,7 @@ components:
       - body
       - recipient
       - subject
-    PaginatedAppointmentList:
+    PaginatedAppointmentAutoList:
       type: object
       required:
       - count
@@ -1536,8 +1650,8 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Appointment'
-    PaginatedBusinessProfileList:
+            $ref: '#/components/schemas/AppointmentAuto'
+    PaginatedBusinessProfileAutoList:
       type: object
       required:
       - count
@@ -1559,8 +1673,8 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/BusinessProfile'
-    PaginatedListingList:
+            $ref: '#/components/schemas/BusinessProfileAuto'
+    PaginatedListingAutoList:
       type: object
       required:
       - count
@@ -1582,8 +1696,8 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Listing'
-    PaginatedNotificationList:
+            $ref: '#/components/schemas/ListingAuto'
+    PaginatedNotificationAutoList:
       type: object
       required:
       - count
@@ -1605,8 +1719,8 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Notification'
-    PaginatedPaymentTransactionList:
+            $ref: '#/components/schemas/NotificationAuto'
+    PaginatedPaymentTransactionAutoList:
       type: object
       required:
       - count
@@ -1628,8 +1742,8 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/PaymentTransaction'
-    PaginatedServiceList:
+            $ref: '#/components/schemas/PaymentTransactionAuto'
+    PaginatedServiceAutoList:
       type: object
       required:
       - count
@@ -1651,8 +1765,8 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Service'
-    PaginatedUserList:
+            $ref: '#/components/schemas/ServiceAuto'
+    PaginatedUserAutoList:
       type: object
       required:
       - count
@@ -1674,8 +1788,8 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/User'
-    PatchedAppointmentRequest:
+            $ref: '#/components/schemas/UserAuto'
+    PatchedAppointmentAutoRequest:
       type: object
       properties:
         customer:
@@ -1693,18 +1807,16 @@ components:
           maxLength: 50
         notes:
           type: string
-    PatchedBusinessProfileRequest:
+    PatchedBusinessProfileAutoRequest:
       type: object
       properties:
-        owner:
-          type: integer
         name:
           type: string
           minLength: 1
           maxLength: 255
         description:
           type: string
-    PatchedListingRequest:
+    PatchedListingAutoRequest:
       type: object
       properties:
         business:
@@ -1717,7 +1829,7 @@ components:
           pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
         is_active:
           type: boolean
-    PatchedNotificationRequest:
+    PatchedNotificationAutoRequest:
       type: object
       properties:
         recipient:
@@ -1729,7 +1841,7 @@ components:
         body:
           type: string
           minLength: 1
-    PatchedPaymentTransactionRequest:
+    PatchedPaymentTransactionAutoRequest:
       type: object
       properties:
         appointment:
@@ -1742,7 +1854,7 @@ components:
           type: string
           minLength: 1
           maxLength: 10
-    PatchedServiceRequest:
+    PatchedServiceAutoRequest:
       type: object
       properties:
         business:
@@ -1755,7 +1867,10 @@ components:
           type: string
         duration_minutes:
           type: integer
-    PatchedUserRequest:
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+    PatchedUserAutoRequest:
       type: object
       properties:
         email:
@@ -1766,7 +1881,7 @@ components:
         full_name:
           type: string
           maxLength: 255
-    PaymentTransaction:
+    PaymentTransactionAuto:
       type: object
       properties:
         id:
@@ -1803,7 +1918,7 @@ components:
       - id
       - status
       - updated_at
-    PaymentTransactionRequest:
+    PaymentTransactionAutoRequest:
       type: object
       properties:
         appointment:
@@ -1819,7 +1934,7 @@ components:
       required:
       - amount
       - appointment
-    Service:
+    ServiceAuto:
       type: object
       properties:
         id:
@@ -1834,6 +1949,9 @@ components:
           type: string
         duration_minutes:
           type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
         created_at:
           type: string
           format: date-time
@@ -1848,7 +1966,7 @@ components:
       - id
       - name
       - updated_at
-    ServiceRequest:
+    ServiceAutoRequest:
       type: object
       properties:
         business:
@@ -1861,6 +1979,9 @@ components:
           type: string
         duration_minutes:
           type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
       required:
       - business
       - name
@@ -1909,7 +2030,7 @@ components:
           minLength: 1
       required:
       - refresh
-    User:
+    UserAuto:
       type: object
       properties:
         id:
@@ -1939,7 +2060,7 @@ components:
       - id
       - is_active
       - updated_at
-    UserRequest:
+    UserAutoRequest:
       type: object
       properties:
         email:
