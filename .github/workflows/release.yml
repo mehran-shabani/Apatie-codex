@@ -10,13 +10,15 @@ on:
       - published
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   release-please:
     if: github.event_name != 'release'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Run Release Please
         uses: google-github-actions/release-please-action@v4
