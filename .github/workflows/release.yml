@@ -3,7 +3,7 @@ name: Release Automation
 on:
   push:
     branches:
-      - work
+      - main
   workflow_dispatch:
   release:
     types:
