@@ -5,8 +5,8 @@ The script reads the latest git tag matching ``vX.Y.Z`` (or ``X.Y.Z``) and then
 analyses commit messages since that tag.  It loosely follows the Conventional
 Commits guidelines: commits mentioning ``BREAKING CHANGE`` or using the ``!``
 syntax trigger a major bump, ``feat`` commits trigger a minor bump, and all
-other commits trigger a patch bump.  If no tag is found the base version is
-``0.0.0`` and the script returns ``0.1.0`` to bootstrap the release process.
+other commits trigger a patch bump.  If no tag is found the versioning starts
+at ``1.0.0``.
 """
 from __future__ import annotations
 
@@ -138,15 +138,7 @@ def main() -> int:
     bump_level = determine_bump(commits)
 
     if latest_tag is None:
-        if not commits:
-            print("0.1.0")
-            return 0
-        if bump_level == "major":
-            next_version = Version(1, 0, 0)
-        else:
-            # For both "minor" and "patch" bumps we start at 0.1.0 to
-            # bootstrap the release history.
-            next_version = Version(0, 1, 0)
+        next_version = Version(1, 0, 0)
     else:
         base = latest_tag
         next_version = base.bump(bump_level)
