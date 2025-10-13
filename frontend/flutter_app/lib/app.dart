@@ -43,13 +43,9 @@ class App extends StatelessWidget {
                 ),
                 orElse: () => defaultLocale,
               );
-              Intl.defaultLocale = resolved.toLanguageTag();
+              Intl.defaultLocale =
+                  Intl.canonicalizedLocale(resolved.toLanguageTag());
               return resolved;
-            },
-            builder: (context, child) {
-              final locale = Localizations.maybeLocaleOf(context) ?? defaultLocale;
-              Intl.defaultLocale = Intl.canonicalizedLocale(locale.toString());
-              return child ?? const SizedBox.shrink();
             },
           );
         },

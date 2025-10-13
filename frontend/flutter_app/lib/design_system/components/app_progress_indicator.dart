@@ -45,7 +45,13 @@ class AppProgressIndicator extends StatelessWidget {
           );
 
     final semanticValue = value != null
-        ? '${NumberFormat.decimalPattern(Intl.getCurrentLocale()).format((value!.clamp(0, 1) * 100).round())} درصد'
+        ? (() {
+            final locale = Intl.getCurrentLocale();
+            final formatter = NumberFormat.percentPattern(locale)
+              ..maximumFractionDigits = 0
+              ..minimumFractionDigits = 0;
+            return formatter.format(value!.clamp(0.0, 1.0));
+          })()
         : null;
 
     return Semantics(

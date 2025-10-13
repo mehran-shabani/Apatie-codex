@@ -14,6 +14,8 @@ class AppLabel extends StatelessWidget {
     this.compact = false,
     this.onClose,
     this.semanticLabel,
+    this.closeButtonSemanticLabel,
+    this.closeButtonTooltip,
   });
 
   final String text;
@@ -23,6 +25,8 @@ class AppLabel extends StatelessWidget {
   final bool compact;
   final VoidCallback? onClose;
   final String? semanticLabel;
+  final String? closeButtonSemanticLabel;
+  final String? closeButtonTooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +82,7 @@ class AppLabel extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsetsDirectional.only(start: AppSpacing.xs),
                   child: Semantics(
-                    button: true,
-                    label: 'بستن برچسب',
+                    label: closeButtonSemanticLabel,
                     child: IconButton(
                       onPressed: onClose,
                       style: IconButton.styleFrom(
@@ -87,7 +90,7 @@ class AppLabel extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      tooltip: 'بستن برچسب',
+                      tooltip: closeButtonTooltip ?? closeButtonSemanticLabel,
                       icon: Icon(
                         Icons.close,
                         size: compact ? 16 : 18,

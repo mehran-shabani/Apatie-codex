@@ -124,6 +124,7 @@ class _AppInputFieldState extends State<AppInputField> {
     final reduceMotion = AccessibilityUtils.reduceMotion(context);
     final errorDuration =
         AccessibilityUtils.motionAwareDuration(context, milliseconds: 140);
+    final hasError = widget.errorText != null;
 
     final field = ConstrainedBox(
       constraints: const BoxConstraints(
@@ -145,8 +146,6 @@ class _AppInputFieldState extends State<AppInputField> {
           hintText: widget.placeholder,
           helperText:
               widget.isLoading ? 'در حال بارگذاری داده' : widget.helperText,
-          errorText: widget.errorText,
-          errorMaxLines: 2,
           filled: true,
           fillColor: colors.background,
           contentPadding: EdgeInsets.symmetric(
@@ -154,14 +153,14 @@ class _AppInputFieldState extends State<AppInputField> {
             vertical: widget.compact ? AppSpacing.xs : AppSpacing.sm,
           ),
           border: _border(colors.border),
-          enabledBorder: _border(colors.border),
+          enabledBorder: _border(
+            hasError ? theme.colorScheme.error : colors.border,
+          ),
           focusedBorder: _border(
-            theme.colorScheme.primary,
+            hasError ? theme.colorScheme.error : theme.colorScheme.primary,
             width: 2,
           ),
           disabledBorder: _border(colors.border.withOpacity(0.4)),
-          errorBorder: _border(theme.colorScheme.error),
-          focusedErrorBorder: _border(theme.colorScheme.error, width: 2),
           labelStyle: theme.textTheme.bodyMedium?.copyWith(
             color: colors.foreground,
           ),
@@ -170,10 +169,6 @@ class _AppInputFieldState extends State<AppInputField> {
           ),
           helperStyle: theme.textTheme.bodySmall?.copyWith(
             color: colors.foreground.withOpacity(0.7),
-          ),
-          errorStyle: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.error,
-            fontWeight: FontWeight.w600,
           ),
         ),
         style: theme.textTheme.bodyLarge?.copyWith(color: colors.foreground),
