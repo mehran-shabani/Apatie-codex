@@ -34,7 +34,7 @@ def test_appointment_queryset_scoped_for_regular_users(
     appointment_factory(customer=other_customer)
 
     api_client.force_authenticate(customer)
-    response = api_client.get(reverse("api:appointment-list"))
+    response = api_client.get(reverse("api:appointments-list"))
 
     assert response.status_code == 200
     appointment_ids = {item["id"] for item in extract_results(response.json())}
@@ -43,7 +43,7 @@ def test_appointment_queryset_scoped_for_regular_users(
 
 @pytest.mark.django_db
 def test_anonymous_user_cannot_list_business_profiles(api_client):
-    response = api_client.get(reverse("api:business-list"))
+    response = api_client.get(reverse("api:businesses-list"))
 
     assert response.status_code in {
         status.HTTP_401_UNAUTHORIZED,
@@ -59,7 +59,7 @@ def test_anonymous_user_cannot_retrieve_business_profile(
 ):
     profile = business_profile_factory()
 
-    response = api_client.get(reverse("api:business-detail", args=[profile.pk]))
+    response = api_client.get(reverse("api:businesses-detail", args=[profile.pk]))
 
     assert response.status_code in {
         status.HTTP_401_UNAUTHORIZED,
@@ -76,7 +76,7 @@ def test_appointment_queryset_visible_to_staff(api_client, appointment_factory, 
     second_appointment = appointment_factory()
 
     api_client.force_authenticate(staff_user)
-    response = api_client.get(reverse("api:appointment-list"))
+    response = api_client.get(reverse("api:appointments-list"))
 
     assert response.status_code == 200
     appointment_ids = {item["id"] for item in extract_results(response.json())}
@@ -95,7 +95,7 @@ def test_service_queryset_filtered_for_business_owner(
     service_factory(business=business_profile_factory(owner=other_owner))
 
     api_client.force_authenticate(owner)
-    response = api_client.get(reverse("api:service-list"))
+    response = api_client.get(reverse("api:services-list"))
 
     assert response.status_code == 200
     service_ids = {item["id"] for item in extract_results(response.json())}
@@ -109,7 +109,7 @@ def test_service_queryset_visible_to_staff(api_client, service_factory, user_fac
     service_two = service_factory()
 
     api_client.force_authenticate(staff_user)
-    response = api_client.get(reverse("api:service-list"))
+    response = api_client.get(reverse("api:services-list"))
 
     assert response.status_code == 200
     service_ids = {item["id"] for item in extract_results(response.json())}
@@ -132,7 +132,7 @@ def test_listing_queryset_filtered_for_business_owner(
     listing_factory(service=other_service, business=other_business)
 
     api_client.force_authenticate(owner)
-    response = api_client.get(reverse("api:listing-list"))
+    response = api_client.get(reverse("api:listings-list"))
 
     assert response.status_code == 200
     listing_ids = {item["id"] for item in extract_results(response.json())}
@@ -146,7 +146,7 @@ def test_listing_queryset_visible_to_staff(api_client, listing_factory, user_fac
     listing_two = listing_factory()
 
     api_client.force_authenticate(staff_user)
-    response = api_client.get(reverse("api:listing-list"))
+    response = api_client.get(reverse("api:listings-list"))
 
     assert response.status_code == 200
     listing_ids = {item["id"] for item in extract_results(response.json())}
@@ -160,7 +160,7 @@ def test_business_profile_owner_is_request_user(api_client, user_factory):
 
     api_client.force_authenticate(authenticated_user)
     response = api_client.post(
-        reverse("api:business-list"),
+        reverse("api:businesses-list"),
         data={
             "name": "Creator Business",
             "description": "Created via API",
@@ -199,7 +199,7 @@ def test_notification_send_test_action_invokes_adapter(
 
     user = user_factory(email="notify@example.com")
     api_client.force_authenticate(user)
-    response = api_client.post(reverse("api:notification-send-test-notification"))
+    response = api_client.post(reverse("api:notifications-send-test-notification"))
 
     assert response.status_code == 200
     assert response.json() == {"success": True, "message": "queued"}
@@ -237,7 +237,7 @@ def test_payment_capture_updates_transaction(
     user = user_factory(email="payments@example.com")
 
     api_client.force_authenticate(user)
-    response = api_client.post(reverse("api:payment-capture", args=[payment.pk]))
+    response = api_client.post(reverse("api:payments-capture", args=[payment.pk]))
 
     assert response.status_code == 200
     data = response.json()

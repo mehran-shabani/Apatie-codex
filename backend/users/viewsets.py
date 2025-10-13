@@ -1,14 +1,7 @@
-"""Viewsets for user resources."""
+"""User viewsets reuse the shared API definitions."""
 
 from __future__ import annotations
 
-from rest_framework import permissions, viewsets
+from api.viewsets import UserViewSet
 
-from .models import User
-from .serializers import UserSerializer
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by("-created_at")
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+__all__ = ["UserViewSet"]

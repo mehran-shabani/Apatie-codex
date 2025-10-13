@@ -19,7 +19,7 @@ def test_jwt_auth_flow(api_client, user_factory):
     assert "access" in tokens and "refresh" in tokens
 
     api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {tokens['access']}")
-    user_list_url = reverse("api:user-list")
+    user_list_url = reverse("api:users-list")
     list_response = api_client.get(user_list_url)
 
     assert list_response.status_code == 200

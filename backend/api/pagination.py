@@ -1,6 +1,10 @@
 """Pagination utilities for the public API."""
 
+from __future__ import annotations
+
 from rest_framework.pagination import PageNumberPagination
+
+__all__ = ["DefaultPagination"]
 
 
 class DefaultPagination(PageNumberPagination):
