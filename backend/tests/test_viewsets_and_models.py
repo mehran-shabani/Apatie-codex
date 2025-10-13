@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 from django.urls import reverse
+from rest_framework import status
 
 from business.models import BusinessProfile
 from notifications.adapters import NotificationResult
@@ -30,6 +31,34 @@ def test_appointment_queryset_scoped_for_regular_users(
     assert response.status_code == 200
     appointment_ids = {item["id"] for item in response.json()}
     assert appointment_ids == {customer_appointment.id}
+
+
+@pytest.mark.django_db
+def test_anonymous_user_cannot_list_business_profiles(api_client):
+    response = api_client.get(reverse("business-list"))
+
+    assert response.status_code in {
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+    }
+    payload = response.json()
+    assert payload.get("detail")
+
+
+@pytest.mark.django_db
+def test_anonymous_user_cannot_retrieve_business_profile(
+    api_client, business_profile_factory
+):
+    profile = business_profile_factory()
+
+    response = api_client.get(reverse("business-detail", args=[profile.pk]))
+
+    assert response.status_code in {
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+    }
+    payload = response.json()
+    assert payload.get("detail")
 
 
 @pytest.mark.django_db
