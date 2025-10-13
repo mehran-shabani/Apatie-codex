@@ -38,6 +38,10 @@ def _resolve_secret_key() -> str:
 
 SECRET_KEY = _resolve_secret_key()
 
+# Keep JWT signing key consistent with the resolved secret key to avoid
+# using the insecure development default when SECRET_KEY is regenerated.
+SIMPLE_JWT["SIGNING_KEY"] = SECRET_KEY
+
 
 DEFAULT_ALLOWED_HOSTS = ["apatie.example"]
 ALLOWED_HOSTS = ENV.list("ALLOWED_HOSTS", default=DEFAULT_ALLOWED_HOSTS)
