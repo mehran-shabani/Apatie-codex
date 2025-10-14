@@ -106,17 +106,57 @@ class GoldenConfig {
     await tester.pumpDeviceBuilder(builder);
     await tester.pumpAndSettle();
 
-    final goldenUri = _resolveGoldenUri(name);
+    final scenarioNames = surfaces
+        .map((surface) => surface.name)
+        .where((name) => name.isNotEmpty)
+        .toSet();
 
-    if (!autoUpdateGoldenFiles && goldenUri != null) {
-      final goldenFile = File.fromUri(goldenUri);
+    if (!autoUpdateGoldenFiles) {
+      if (scenarioNames.isEmpty) {
+        final goldenUri = _resolveGoldenUri(name);
 
-      if (!goldenFile.existsSync()) {
-        debugPrint(
-          'Skipping golden assertion for "$name" because no baseline was found. '
-          'Run `flutter test --update-goldens` to generate it.',
-        );
-        return;
+        if (goldenUri != null) {
+          final goldenFile = File.fromUri(goldenUri);
+
+          if (!goldenFile.existsSync()) {
+            debugPrint(
+              'Skipping golden assertion for "$name" because no baseline was '
+              'found. Run `flutter test --update-goldens` to generate it.',
+            );
+            return;
+          }
+        }
+      } else {
+        final missingScenarios = <String>[];
+        var resolvedAnyScenario = false;
+
+        for (final scenarioName in scenarioNames) {
+          final goldenUri = _resolveGoldenUri(
+            name,
+            scenario: scenarioName,
+          );
+
+          if (goldenUri == null) {
+            continue;
+          }
+
+          resolvedAnyScenario = true;
+
+          final goldenFile = File.fromUri(goldenUri);
+
+          if (!goldenFile.existsSync()) {
+            missingScenarios.add(scenarioName);
+          }
+        }
+
+        if (resolvedAnyScenario && missingScenarios.isNotEmpty) {
+          debugPrint(
+            'Skipping golden assertion for "$name" because no baseline was '
+            'found for scenarios: ${missingScenarios.join(', ')}. '
+            'Run `flutter test --update-goldens` to generate them.',
+          );
+          return;
+        }
       }
     }
 
@@ -124,11 +164,13 @@ class GoldenConfig {
   }
 }
 
-Uri? _resolveGoldenUri(String name) {
+Uri? _resolveGoldenUri(String name, {String? scenario}) {
   final comparator = goldenFileComparator;
 
   if (comparator is LocalFileComparator) {
-    return comparator.getTestUri(Uri.parse('$name.png'));
+    final suffix = scenario == null || scenario.isEmpty ? '' : '.$scenario';
+
+    return comparator.getTestUri(Uri.parse('$name$suffix.png'));
   }
 
   return null;
