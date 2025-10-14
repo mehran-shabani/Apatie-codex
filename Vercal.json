@@ -1,0 +1,10 @@
+{ "version": 2,
+  "root": "frontend/flutter_app",
+  "projectSettings": {
+    "framework": "other"
+  },
+  "installCommand": "flutter pub get",
+  "buildCommand": "flutter build web --release",
+  "outputDirectory": "build/web",
+  "cleanUrls": true
+}
