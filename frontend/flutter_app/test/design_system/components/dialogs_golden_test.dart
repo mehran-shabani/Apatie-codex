@@ -108,7 +108,7 @@ class _DialogsPreview extends StatelessWidget {
     BuildContext context, {
     required String title,
     required String content,
-    List<Widget>? actions,
+    List<Widget> actions = const <Widget>[],
     AppComponentStatus tone = AppComponentStatus.neutral,
     bool compact = false,
     bool isLoading = false,
@@ -122,18 +122,11 @@ class _DialogsPreview extends StatelessWidget {
           textAlign: TextAlign.right,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        actions: actions ?? const <Widget>[],
+        actions: actions,
         tone: tone,
         compact: compact,
         isLoading: isLoading,
       ),
     );
-  }
-
-  List<Widget> _dialogActions(BuildContext context) {
-    return [
-      AppButton(label: 'لغو', onPressed: () {}),
-      AppButton(label: 'تأیید', onPressed: () {}),
-    ];
   }
 }
