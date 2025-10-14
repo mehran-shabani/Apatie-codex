@@ -13,7 +13,7 @@ class AppConfig {
   static const String _backendUrlKey = 'BACKEND_BASE_URL';
   static const String _websocketUrlKey = 'WEBSOCKET_URL';
 
-  static const AppConfig fallback = AppConfig(
+  static final AppConfig fallback = AppConfig(
     backendBaseUrl: Uri(scheme: 'http', host: 'localhost', port: 8000),
     websocketUrl: Uri(scheme: 'ws', host: 'localhost', port: 8000, path: 'ws'),
   );
