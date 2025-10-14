@@ -37,7 +37,7 @@ class AppointmentsPage extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 420, maxHeight: 620),
+              constraints: const BoxConstraints(minHeight: 420, maxHeight: 720),
               child: const AppointmentsFullScreenFlow(),
             ),
             const SizedBox(height: AppSpacing.md),

@@ -16,6 +16,14 @@ class AppRouter {
   late final GoRouter router = GoRouter(
     initialLocation: AppointmentsPage.routePath,
     routes: [
+      GoRoute(
+        path: '/',
+        redirect: (context, state) => AppointmentsPage.routePath,
+      ),
+      GoRoute(
+        path: '/home',
+        redirect: (context, state) => AppointmentsPage.routePath,
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
             AppShell(navigationShell: navigationShell),
@@ -23,7 +31,7 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppointmentsPage.routeName,
+                path: AppointmentsPage.routePath,
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: AppointmentsPage(),
                 ),
@@ -42,7 +50,7 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: MarketplacePage.routeName,
+                path: MarketplacePage.routePath,
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: MarketplacePage(),
                 ),
@@ -68,7 +76,7 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: ServicesPage.routeName,
+                path: ServicesPage.routePath,
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: ServicesPage(),
                 ),
