@@ -62,7 +62,7 @@ class _ExampleComponent extends StatelessWidget {
 }
 
 class _TrivialGoldenComparator extends GoldenFileComparator {
-  _TrivialGoldenComparator() : super(Uri.parse('file:///trivial'));
+  _TrivialGoldenComparator();
 
   @override
   Future<bool> compare(Uint8List imageBytes, Uri golden) async => true;

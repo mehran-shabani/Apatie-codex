@@ -29,15 +29,27 @@ void main() {
       (tester) async {
         final announcements = <String>[];
         final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
-        final previousHandler = messenger.getMockMethodCallHandler(SystemChannels.accessibility);
-        messenger.setMockMethodCallHandler(SystemChannels.accessibility, (methodCall) async {
-          if (methodCall.method == 'announce') {
-            announcements.add(methodCall.arguments as String);
-          }
-          return null;
-        });
+        messenger.setMockDecodedMessageHandler<Object?>(
+          SystemChannels.accessibility,
+          (Object? message) async {
+            if (message is Map<Object?, Object?>) {
+              final Object? type = message['type'];
+              final Object? data = message['data'];
+              if (type == 'announce' && data is Map<Object?, Object?>) {
+                final Object? announcedMessage = data['message'];
+                if (announcedMessage is String) {
+                  announcements.add(announcedMessage);
+                }
+              }
+            }
+            return null;
+          },
+        );
         addTearDown(() {
-          messenger.setMockMethodCallHandler(SystemChannels.accessibility, previousHandler);
+          messenger.setMockDecodedMessageHandler<Object?>(
+            SystemChannels.accessibility,
+            null,
+          );
         });
 
         final strings = _ServicesStrings.forLocale(config.locale);

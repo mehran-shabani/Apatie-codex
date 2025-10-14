@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:vm_service/vm_service.dart';
+import 'package:vm_service/vm_service.dart' as vm;
+import 'package:vm_service/vm_service_io.dart' as vm_io;
 
 import 'package:apatie/app.dart';
 
@@ -31,10 +32,63 @@ class _InMemoryHydratedStorage implements HydratedStorage {
 }
 
 final IntegrationTestWidgetsFlutterBinding _binding =
-    IntegrationTestWidgetsFlutterBinding.ensureInitialized()
-        as IntegrationTestWidgetsFlutterBinding;
+    IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
 final Map<String, dynamic> _performanceReport = <String, dynamic>{};
+vm.VmService? _vmService;
+
+class _FramePerformanceSummary {
+  _FramePerformanceSummary({
+    required this.buildDurations,
+    required this.rasterDurations,
+    required this.report,
+  });
+
+  final List<Duration> buildDurations;
+  final List<Duration> rasterDurations;
+  final Map<String, dynamic> report;
+
+  int get frameCount =>
+      (report['frame_count'] as num?)?.toInt() ?? buildDurations.length;
+
+  Duration get firstBuildDuration => buildDurations.first;
+  Duration get firstRasterDuration => rasterDurations.first;
+
+  Iterable<Duration> get nonZeroBuildDurations =>
+      buildDurations.where((duration) => duration > Duration.zero);
+
+  Iterable<Duration> get nonZeroRasterDurations =>
+      rasterDurations.where((duration) => duration > Duration.zero);
+
+  static _FramePerformanceSummary fromBindingReport(
+    IntegrationTestWidgetsFlutterBinding binding,
+    String reportKey,
+  ) {
+    final Map<String, dynamic>? reportData = binding.reportData;
+    expect(reportData, isNotNull,
+        reason: 'Performance tracing did not produce any report data.');
+
+    final Object? rawSummary = reportData![reportKey];
+    expect(rawSummary, isNotNull,
+        reason: 'Performance tracing did not produce a report for $reportKey.');
+    expect(rawSummary, isA<Map<dynamic, dynamic>>(),
+        reason: 'Performance report for $reportKey was not a map.');
+
+    final Map<String, dynamic> summaryMap =
+        Map<String, dynamic>.from(rawSummary as Map<dynamic, dynamic>);
+
+    final List<Duration> buildDurations =
+        _durationsFromMicros(summaryMap['frame_build_times']);
+    final List<Duration> rasterDurations =
+        _durationsFromMicros(summaryMap['frame_rasterizer_times']);
+
+    return _FramePerformanceSummary(
+      buildDurations: buildDurations,
+      rasterDurations: rasterDurations,
+      report: summaryMap,
+    );
+  }
+}
 
 void _recordMetrics(String key, Map<String, Object?> metrics) {
   _performanceReport[key] = metrics;
@@ -61,6 +115,36 @@ int _countOverBudget(Iterable<Duration> durations, Duration budget) =>
 
 double _bytesToMegabytes(num bytes) => bytes / (1024 * 1024);
 
+List<Duration> _durationsFromMicros(dynamic rawValues) {
+  if (rawValues is Iterable) {
+    return rawValues
+        .map((dynamic value) => Duration(
+            microseconds: value is int ? value : (value as num).round()))
+        .toList();
+  }
+  return <Duration>[];
+}
+
+Future<vm.VmService> _ensureVmService() async {
+  if (_vmService != null) {
+    return _vmService!;
+  }
+
+  final developer.ServiceProtocolInfo info = await developer.Service.getInfo();
+  final Uri? serverUri = info.serverUri;
+  if (serverUri == null) {
+    throw StateError('Unable to locate VM service URI for memory inspection.');
+  }
+
+  final String host =
+      serverUri.host.isEmpty ? '127.0.0.1' : serverUri.host;
+  final String wsUri =
+      'ws://$host:${serverUri.port}${serverUri.path}ws';
+
+  _vmService = await vm_io.vmServiceConnectUri(wsUri);
+  return _vmService!;
+}
+
 void main() {
   _binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.benchmark;
 
@@ -73,20 +157,24 @@ void main() {
   });
 
   testWidgets('startup first frame stays under budget', (tester) async {
-    final watchResult = await _binding.watchPerformance(() async {
+    await _binding.watchPerformance(() async {
       await tester.pumpWidget(App());
       await tester.pumpAndSettle();
     }, reportKey: 'startup_timeline');
 
-    final frameTimings = watchResult.frameTimings;
-    expect(frameTimings, isNotEmpty,
+    final _FramePerformanceSummary startupSummary =
+        _FramePerformanceSummary.fromBindingReport(
+      _binding,
+      'startup_timeline',
+    );
+
+    expect(startupSummary.frameCount, greaterThan(0),
         reason: 'Performance tracing did not capture any frames.');
 
-    final FrameTiming firstFrame = frameTimings.first;
     final double firstFrameBuildMillis =
-        _durationToMillis(firstFrame.buildDuration);
+        _durationToMillis(startupSummary.firstBuildDuration);
     final double firstFrameRasterMillis =
-        _durationToMillis(firstFrame.rasterDuration);
+        _durationToMillis(startupSummary.firstRasterDuration);
 
     const double maxFirstFrameBuildMillis = 180;
     const double maxFirstFrameRasterMillis = 180;
@@ -94,8 +182,8 @@ void main() {
     _recordMetrics('startup', <String, Object?>{
       'first_frame_build_millis': firstFrameBuildMillis,
       'first_frame_raster_millis': firstFrameRasterMillis,
-      'frame_count': frameTimings.length,
-      'timeline': watchResult.timelineSummary?.summaryJson,
+      'frame_count': startupSummary.frameCount,
+      'frame_summary': startupSummary.report,
     });
 
     expect(
@@ -115,7 +203,7 @@ void main() {
 
   testWidgets('scrolling remains smooth under interaction budget',
       (tester) async {
-    final watchResult = await _binding.watchPerformance(() async {
+    await _binding.watchPerformance(() async {
       await tester.pumpWidget(App());
       await tester.pumpAndSettle();
 
@@ -126,30 +214,38 @@ void main() {
       await tester.pumpAndSettle();
     }, reportKey: 'scroll_timeline');
 
-    final frameTimings = watchResult.frameTimings
-        .where((timing) => timing.buildDuration > Duration.zero)
-        .toList();
-    expect(frameTimings, isNotEmpty,
+    final _FramePerformanceSummary scrollSummary =
+        _FramePerformanceSummary.fromBindingReport(
+      _binding,
+      'scroll_timeline',
+    );
+
+    final List<Duration> buildDurations =
+        scrollSummary.nonZeroBuildDurations.toList();
+    final List<Duration> rasterDurations =
+        scrollSummary.nonZeroRasterDurations.toList();
+
+    expect(buildDurations, isNotEmpty,
         reason: 'Scroll trace did not include any frame timings.');
+    expect(rasterDurations, isNotEmpty,
+        reason: 'Scroll trace did not include any raster timings.');
 
     final averageBuildMillis =
-        _averageMillis(frameTimings.map((timing) => timing.buildDuration));
+        _averageMillis(buildDurations);
     final averageRasterMillis =
-        _averageMillis(frameTimings.map((timing) => timing.rasterDuration));
-    final worstBuildMillis = frameTimings
-        .map((timing) => _durationToMillis(timing.buildDuration))
-        .reduce(math.max);
-    final worstRasterMillis = frameTimings
-        .map((timing) => _durationToMillis(timing.rasterDuration))
-        .reduce(math.max);
+        _averageMillis(rasterDurations);
+    final double worstBuildMillis =
+        buildDurations.map(_durationToMillis).reduce(math.max);
+    final double worstRasterMillis =
+        rasterDurations.map(_durationToMillis).reduce(math.max);
 
     const Duration frameBudget = Duration(milliseconds: 16);
     final int jankyFrameCount = _countOverBudget(
-      frameTimings.map((timing) => timing.buildDuration),
+      buildDurations,
       frameBudget,
     );
     final double jankPercentage =
-        (jankyFrameCount / frameTimings.length) * 100;
+        (jankyFrameCount / buildDurations.length) * 100;
 
     const double maxAverageBuildMillis = 24;
     const double maxAverageRasterMillis = 28;
@@ -161,7 +257,8 @@ void main() {
       'worst_build_millis': worstBuildMillis,
       'worst_raster_millis': worstRasterMillis,
       'janky_frame_percentage': jankPercentage,
-      'frame_count': frameTimings.length,
+      'frame_count': scrollSummary.frameCount,
+      'frame_summary': scrollSummary.report,
     });
 
     expect(
@@ -189,22 +286,22 @@ void main() {
     await tester.pumpWidget(App());
     await tester.pumpAndSettle();
 
-    final VmService? vmService = await _binding.vmService;
-    expect(vmService, isNotNull,
-        reason: 'VM service was not available for memory collection.');
-    final VM vm = await vmService!.getVM();
+    final vm.VmService vmService = await _ensureVmService();
+    final vm.VM vmInstance = await vmService.getVM();
 
-    final Iterable<IsolateRef> isolates = vm.isolates ?? const <IsolateRef>[];
+    final Iterable<vm.IsolateRef> isolates =
+        vmInstance.isolates ?? const <vm.IsolateRef>[];
     final Map<String, Object?> isolateMetrics = <String, Object?>{};
     int totalHeapUsageBytes = 0;
     int totalExternalUsageBytes = 0;
 
-    for (final IsolateRef isolate in isolates) {
+    for (final vm.IsolateRef isolate in isolates) {
       final String? isolateId = isolate.id;
       if (isolateId == null) {
         continue;
       }
-      final MemoryUsage usage = await vmService.getMemoryUsage(isolateId);
+      final vm.MemoryUsage usage =
+          await vmService.getMemoryUsage(isolateId);
       totalHeapUsageBytes += usage.heapUsage ?? 0;
       totalExternalUsageBytes += usage.externalUsage ?? 0;
       isolateMetrics[isolate.name ?? isolateId] = <String, num?>{

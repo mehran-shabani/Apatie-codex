@@ -1,6 +1,5 @@
 import 'package:apatie/design_system/components/app_component_states.dart';
 import 'package:apatie/design_system/components/app_navigation_bar.dart';
-import 'package:apatie/design_system/foundations/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';

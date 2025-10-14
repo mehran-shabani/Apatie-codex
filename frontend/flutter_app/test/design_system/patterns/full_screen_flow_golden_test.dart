@@ -105,7 +105,7 @@ class _FullScreenFlowPreviewState extends State<_FullScreenFlowPreview> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
-                      AppProgressIndicator.linear(
+                      _linearProgressIndicator(
                         semanticLabel: 'پیشرفت تکمیل فرم',
                         value: 0.6,
                       ),
@@ -166,6 +166,23 @@ class _FullScreenFlowPreviewState extends State<_FullScreenFlowPreview> {
         onDestinationSelected: (_) {},
         isLoading: false,
       ),
+    );
+  }
+
+  Widget _linearProgressIndicator({
+    double? value,
+    String? description,
+    AppComponentStatus tone = AppComponentStatus.neutral,
+    bool compact = false,
+    String? semanticLabel,
+  }) {
+    return AppProgressIndicator(
+      value: value,
+      description: description,
+      tone: tone,
+      compact: compact,
+      circular: false,
+      semanticLabel: semanticLabel,
     );
   }
 }

@@ -52,6 +52,7 @@ class _CardInDialogPreviewState extends State<_CardInDialogPreview> {
         Positioned.fill(
           child: DecoratedBox(
             decoration: BoxDecoration(
+              // ignore: deprecated_member_use
               color: theme.colorScheme.surfaceVariant.withOpacity(0.4),
             ),
           ),

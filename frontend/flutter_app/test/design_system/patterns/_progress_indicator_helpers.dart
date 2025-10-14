@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 
 import '../config/golden_config.dart';
-import 'golden_test_utils.dart';
+import '../components/golden_test_utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

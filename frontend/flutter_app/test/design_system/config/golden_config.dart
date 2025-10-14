@@ -90,7 +90,7 @@ class GoldenConfig {
     await loadAppFonts();
 
     final builder = DeviceBuilder()
-      ..overrideDevicesForAllScenarios(<Device>[device]);
+      ..overrideDevicesForAllScenarios(devices: <Device>[device]);
 
     for (final surface in surfaces) {
       builder.addScenario(
@@ -170,7 +170,8 @@ Uri? _resolveGoldenUri(String name, {String? scenario}) {
   if (comparator is LocalFileComparator) {
     final suffix = scenario == null || scenario.isEmpty ? '' : '.$scenario';
 
-    return comparator.getTestUri(Uri.parse('$name$suffix.png'));
+    final Uri baseUri = Uri.parse('$name$suffix.png');
+    return comparator.getTestUri(baseUri, null);
   }
 
   return null;
