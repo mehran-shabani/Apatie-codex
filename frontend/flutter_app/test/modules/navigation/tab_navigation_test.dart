@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:apatie/app.dart';
+import 'package:apatie/shared/config/app_config.dart';
 import '../../helpers/hydrated_bloc.dart';
 
 void main() {
@@ -8,7 +9,7 @@ void main() {
 
   testWidgets('navigates between bottom tabs', (tester) async {
     await runHydrated(() async {
-      await tester.pumpWidget(App());
+      await tester.pumpWidget(App(config: AppConfig.fallback));
       await tester.pumpAndSettle();
 
       expect(find.text('Manage your appointments'), findsOneWidget);

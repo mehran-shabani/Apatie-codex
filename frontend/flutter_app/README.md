@@ -15,6 +15,29 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Environment configuration
+
+The app reads runtime configuration from a small module located under
+[`lib/shared/config/app_config.dart`](lib/shared/config/app_config.dart). The
+loader merges values from (in order of precedence):
+
+1. `--dart-define` compile-time flags passed to `flutter run`/`flutter build`.
+2. A local [dotenv](https://pub.dev/packages/flutter_dotenv) file.
+3. Built-in localhost defaults that unblock new contributors.
+
+To configure a local environment:
+
+1. Copy `.env.example` to `.env` in the `frontend/flutter_app` directory.
+2. Update the `BACKEND_BASE_URL` and `WEBSOCKET_URL` entries to point to the
+   backend and realtime endpoints you want to exercise.
+3. Run `flutter pub get` so the `flutter_dotenv` dependency is available.
+4. Launch the app as usual—`AppConfig.load` automatically imports the `.env`
+   file during start-up.
+
+When a build pipeline already injects environment variables, continue to pass
+the same `--dart-define` flags; they override the values stored in `.env`. No
+additional `build_runner` invocations are required for the configuration layer.
+
 ## Design system golden tests
 
 The visual regression suite that protects the Apatie design system lives under [`test/design_system/`](test/design_system/).

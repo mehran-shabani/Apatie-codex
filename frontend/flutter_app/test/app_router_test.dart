@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:apatie/app.dart';
+import 'package:apatie/shared/config/app_config.dart';
 
 import 'helpers/hydrated_bloc.dart';
 
@@ -9,7 +10,7 @@ void main() {
 
   testWidgets('navigates between tabs without transition animations', (tester) async {
     await runHydrated(() async {
-      await tester.pumpWidget(App());
+      await tester.pumpWidget(App(config: AppConfig.fallback));
       await tester.pumpAndSettle();
 
       expect(find.text('Manage your appointments'), findsOneWidget);
@@ -26,7 +27,7 @@ void main() {
 
   testWidgets('returns to initial route when reselecting the active tab', (tester) async {
     await runHydrated(() async {
-      await tester.pumpWidget(App());
+      await tester.pumpWidget(App(config: AppConfig.fallback));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Products'));

@@ -9,6 +9,7 @@ import 'package:vm_service/vm_service.dart' as vm;
 import 'package:vm_service/vm_service_io.dart' as vm_io;
 
 import 'package:apatie/app.dart';
+import 'package:apatie/shared/config/app_config.dart';
 
 class _InMemoryHydratedStorage implements HydratedStorage {
   _InMemoryHydratedStorage();
@@ -158,7 +159,7 @@ void main() {
 
   testWidgets('startup first frame stays under budget', (tester) async {
     await _binding.watchPerformance(() async {
-      await tester.pumpWidget(App());
+      await tester.pumpWidget(App(config: AppConfig.fallback));
       await tester.pumpAndSettle();
     }, reportKey: 'startup_timeline');
 
@@ -204,7 +205,7 @@ void main() {
   testWidgets('scrolling remains smooth under interaction budget',
       (tester) async {
     await _binding.watchPerformance(() async {
-      await tester.pumpWidget(App());
+      await tester.pumpWidget(App(config: AppConfig.fallback));
       await tester.pumpAndSettle();
 
       final Finder scrollable = find.byType(Scrollable).first;
@@ -283,7 +284,7 @@ void main() {
 
   testWidgets('memory footprint is within limits after warm-up',
       (tester) async {
-    await tester.pumpWidget(App());
+    await tester.pumpWidget(App(config: AppConfig.fallback));
     await tester.pumpAndSettle();
 
     final vm.VmService vmService = await _ensureVmService();
