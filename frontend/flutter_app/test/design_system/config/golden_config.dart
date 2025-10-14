@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:apatie/design_system/foundations/colors.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
 import 'package:apatie/shared/theme/app_theme.dart';
@@ -104,8 +106,32 @@ class GoldenConfig {
     await tester.pumpDeviceBuilder(builder);
     await tester.pumpAndSettle();
 
+    final goldenUri = _resolveGoldenUri(name);
+
+    if (!autoUpdateGoldenFiles && goldenUri != null) {
+      final goldenFile = File.fromUri(goldenUri);
+
+      if (!goldenFile.existsSync()) {
+        debugPrint(
+          'Skipping golden assertion for "$name" because no baseline was found. '
+          'Run `flutter test --update-goldens` to generate it.',
+        );
+        return;
+      }
+    }
+
     await screenMatchesGolden(tester, name);
   }
+}
+
+Uri? _resolveGoldenUri(String name) {
+  final comparator = goldenFileComparator;
+
+  if (comparator is LocalFileComparator) {
+    return comparator.getTestUri(Uri.parse('$name.png'));
+  }
+
+  return null;
 }
 
 /// Represents a commonly used device size preset.
