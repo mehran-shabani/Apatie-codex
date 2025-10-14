@@ -39,6 +39,32 @@ jobs:
         working-directory: frontend/flutter_app
         run: flutter pub get
 
-      - name: Test
+      - name: Run unit and widget tests
         working-directory: frontend/flutter_app
         run: flutter test
+
+      - name: Run performance integration tests
+        working-directory: frontend/flutter_app
+        run: |
+          set -o pipefail
+          mkdir -p build/performance
+          flutter test integration_test/performance --machine \
+            > build/performance/raw_results.json
+          status=$?
+          if [ ! -f "../../scripts/parse_performance_metrics.py" ]; then
+            echo "Error: parse_performance_metrics.py not found"
+            exit 1
+          fi
+          python3 ../../scripts/parse_performance_metrics.py \
+            --input build/performance/raw_results.json \
+            --json-output build/performance/metrics.json \
+            --markdown-output build/performance/metrics.md
+          cat build/performance/metrics.md >> "$GITHUB_STEP_SUMMARY"
+          exit $status
+
+      - name: Upload performance metrics artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-performance-metrics
+          path: frontend/flutter_app/build/performance
