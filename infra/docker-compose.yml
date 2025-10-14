@@ -1,7 +1,6 @@
 version: "3.9"
 
-x-backend-service: &backend-service
-  image: apatie-backend:latest
+x-backend-common: &backend-common
   env_file:
     - ../.env
     - ../backend/.env
@@ -53,24 +52,28 @@ services:
       retries: 5
 
   backend:
-    <<: *backend-service
+    <<: *backend-common
     build:
       context: ..
-      dockerfile: infra/backend.Dockerfile
+      dockerfile: infra/Dockerfile
+    image: apatie-backend:latest
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
 
   celery_worker:
-    <<: *backend-service
+    <<: *backend-common
+    image: apatie-backend:latest
     command: celery -A core.celery worker -l info
 
   celery_beat:
-    <<: *backend-service
+    <<: *backend-common
+    image: apatie-backend:latest
     command: celery -A core.celery beat -l info
 
   channels_worker:
-    <<: *backend-service
+    <<: *backend-common
+    image: apatie-backend:latest
     command: python manage.py runworker
 
 networks:
