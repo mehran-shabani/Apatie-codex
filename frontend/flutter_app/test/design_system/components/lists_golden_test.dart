@@ -1,5 +1,6 @@
 import 'package:apatie/design_system/components/app_component_states.dart';
 import 'package:apatie/design_system/components/app_list.dart';
+import 'package:apatie/design_system/components/app_option_row.dart';
 import 'package:apatie/design_system/foundations/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,11 +13,11 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AppList golden tests', () {
-    testGoldens('renders list variants', (tester) async {
+    testGoldens('presents selectable, hovered, and statusful rows', (tester) async {
       await withTrivialGoldenComparator(() async {
         await GoldenConfig.pumpGoldenWidget(
           tester,
-          name: 'design_system/components/lists',
+          name: 'test/design_system/goldens/components/lists_state_showcase',
           widget: const _ListsPreview(),
         );
       });
@@ -29,66 +30,145 @@ class _ListsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          AppList(
-            semanticLabel: 'فهرست اصلی',
-            items: [
-              AppListItem(
-                title: 'گزارش فروش',
-                subtitle: 'آخرین به‌روزرسانی: ۳ دقیقه پیش',
-                leading: CircleAvatar(
-                  backgroundColor: theme.colorScheme.primary,
-                  child: const Icon(Icons.bar_chart, color: Colors.white),
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      child: ComponentStateGallery(
+        sections: [
+          ComponentStateSection(
+            title: 'حالت‌های تعاملی آیتم‌ها',
+            tiles: [
+              ComponentStateTile(
+                label: 'لیست استاندارد',
+                child: _buildList(
+                  context,
+                  items: [
+                    _item('جزئیات مشتری', subtitle: 'آخرین فعالیت در ۲۴ ساعت گذشته'),
+                    _item('یادداشت داخلی', subtitle: 'افزوده شده توسط تیم فروش'),
+                  ],
                 ),
-                trailing: const Icon(Icons.chevron_left),
-                tone: AppComponentStatus.info,
-                selected: true,
-                onTap: () {},
               ),
-              AppListItem(
-                title: 'درخواست‌های پشتیبانی',
-                subtitle: '۲ مورد جدید',
-                leading: CircleAvatar(
-                  backgroundColor: theme.colorScheme.secondary,
-                  child: const Icon(Icons.support_agent, color: Colors.white),
+              ComponentStateTile(
+                label: 'گزینهٔ شناور',
+                child: GoldenHoverActivator(
+                  child: _buildList(
+                    context,
+                    items: [
+                      _item('در حال بررسی', subtitle: 'منتظر تأیید', interactive: true),
+                    ],
+                  ),
                 ),
-                trailing: const Icon(Icons.arrow_back),
-                tone: AppComponentStatus.warning,
-                onTap: () {},
               ),
-              const AppListItem(
-                title: 'آرشیو اسناد',
-                subtitle: 'دسترسی فقط خواندنی',
-                disabled: true,
+              ComponentStateTile(
+                label: 'نسخهٔ فشرده',
+                child: _buildList(
+                  context,
+                  items: [
+                    _item('وظیفهٔ سریع', compact: true, subtitle: 'زمان پاسخ: ۳۰ دقیقه'),
+                    _item('وظیفهٔ دوم', compact: true, subtitle: 'زمان پاسخ: ۴۵ دقیقه'),
+                  ],
+                ),
+              ),
+              ComponentStateTile(
+                label: 'آیتم غیرفعال',
+                child: _buildList(
+                  context,
+                  items: [
+                    _item('دسترسی محدود', disabled: true, subtitle: 'برای مشاهده مجوز لازم است'),
+                  ],
+                ),
+              ),
+              ComponentStateTile(
+                label: 'نمایش بارگذاری',
+                child: _buildList(
+                  context,
+                  items: [
+                    _item('در حال همگام‌سازی', isLoading: true, subtitle: 'صبر کنید...'),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.lg),
-          AppList(
-            separated: false,
-            semanticLabel: 'فهرست فشرده',
-            items: const [
-              AppListItem(
-                title: 'حساب اصلی',
-                subtitle: 'فعال',
-                compact: true,
-                tone: AppComponentStatus.success,
+          ComponentStateSection(
+            title: 'حالات وضعیت',
+            tiles: [
+              ComponentStateTile(
+                label: 'موفق و انتخاب‌شده',
+                child: _buildList(
+                  context,
+                  items: [
+                    _item(
+                      'خروجی نهایی',
+                      subtitle: 'توسط ناظر تأیید شد',
+                      selected: true,
+                      tone: AppComponentStatus.success,
+                    ),
+                  ],
+                ),
               ),
-              AppListItem(
-                title: 'حساب فرعی',
-                subtitle: 'غیرفعال',
-                compact: true,
-                tone: AppComponentStatus.error,
-                isLoading: true,
+              ComponentStateTile(
+                label: 'هشدار',
+                child: _buildList(
+                  context,
+                  items: [
+                    _item(
+                      'نیاز به بازبینی',
+                      subtitle: 'مهلت تا ۱۲ ساعت دیگر',
+                      tone: AppComponentStatus.warning,
+                    ),
+                  ],
+                ),
+              ),
+              ComponentStateTile(
+                label: 'خطا',
+                child: _buildList(
+                  context,
+                  items: [
+                    _item(
+                      'پردازش ناموفق',
+                      subtitle: 'جزئیات خطا برای بررسی موجود است',
+                      tone: AppComponentStatus.error,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildList(
+    BuildContext context, {
+    required List<AppListItem> items,
+  }) {
+    return AppList(
+      items: items,
+      separated: true,
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+    );
+  }
+
+  AppListItem _item(
+    String title, {
+    String? subtitle,
+    bool selected = false,
+    bool disabled = false,
+    bool compact = false,
+    bool isLoading = false,
+    bool interactive = false,
+    AppComponentStatus tone = AppComponentStatus.neutral,
+  }) {
+    return AppListItem(
+      title: title,
+      subtitle: subtitle,
+      selected: selected,
+      disabled: disabled,
+      compact: compact,
+      isLoading: isLoading,
+      tone: tone,
+      onTap: interactive ? () {} : null,
+      trailing: const Icon(Icons.chevron_left),
     );
   }
 }

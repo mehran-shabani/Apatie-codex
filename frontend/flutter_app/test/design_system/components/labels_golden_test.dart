@@ -12,11 +12,11 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AppLabel golden tests', () {
-    testGoldens('renders label variants', (tester) async {
+    testGoldens('renders semantic tone and density combinations', (tester) async {
       await withTrivialGoldenComparator(() async {
         await GoldenConfig.pumpGoldenWidget(
           tester,
-          name: 'design_system/components/labels',
+          name: 'test/design_system/goldens/components/labels_variants',
           widget: const _LabelsPreview(),
         );
       });
@@ -30,59 +30,89 @@ class _LabelsPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              AppLabel(
-                text: 'اطلاع رسانی',
-                icon: const Icon(Icons.info_outline),
-                tone: AppComponentStatus.info,
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      child: ComponentStateGallery(
+        sections: [
+          ComponentStateSection(
+            title: 'حالت‌های پایه',
+            tiles: [
+              ComponentStateTile(
+                label: 'برچسب اطلاعاتی',
+                child: _buildLabel(
+                  text: 'به‌روزرسانی شد',
+                  tone: AppComponentStatus.info,
+                ),
               ),
-              AppLabel(
-                text: 'موفقیت عملیات',
-                icon: const Icon(Icons.check_circle_outline),
-                tone: AppComponentStatus.success,
-                compact: true,
+              ComponentStateTile(
+                label: 'نسخهٔ فشرده',
+                child: _buildLabel(
+                  text: 'کم‌حجم',
+                  tone: AppComponentStatus.info,
+                  compact: true,
+                ),
               ),
-              AppLabel(
-                text: 'خطای سیستم',
-                icon: const Icon(Icons.error_outline),
-                tone: AppComponentStatus.error,
-                onClose: () {},
-                closeButtonSemanticLabel: 'بستن برچسب خطا',
-              ),
-              AppLabel(
-                text: 'هشدار امنیتی',
-                icon: const Icon(Icons.warning_amber_rounded),
-                tone: AppComponentStatus.warning,
-                onClose: () {},
-                compact: true,
+              ComponentStateTile(
+                label: 'با دکمهٔ بستن',
+                child: _buildLabel(
+                  text: 'پیام موقت',
+                  tone: AppComponentStatus.info,
+                  onClose: () {},
+                ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.lg),
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: const [
-              AppLabel(
-                text: 'برچسب ساده',
-                tone: AppComponentStatus.neutral,
+          ComponentStateSection(
+            title: 'برچسب‌های وضعیت',
+            tiles: [
+              ComponentStateTile(
+                label: 'موفق',
+                child: _buildLabel(
+                  text: 'تأیید شده',
+                  tone: AppComponentStatus.success,
+                ),
               ),
-              AppLabel(
-                text: 'اطلاعات خنثی',
-                compact: true,
+              ComponentStateTile(
+                label: 'هشدار',
+                child: _buildLabel(
+                  text: 'نیاز به اقدام',
+                  tone: AppComponentStatus.warning,
+                ),
+              ),
+              ComponentStateTile(
+                label: 'خطا',
+                child: _buildLabel(
+                  text: 'رد شده',
+                  tone: AppComponentStatus.error,
+                ),
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLabel({
+    required String text,
+    required AppComponentStatus tone,
+    bool compact = false,
+    VoidCallback? onClose,
+  }) {
+    return Wrap(
+      alignment: WrapAlignment.end,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: [
+        AppLabel(
+          text: text,
+          tone: tone,
+          compact: compact,
+          icon: const Icon(Icons.info_outline),
+          iconSemanticLabel: 'نماد وضعیت',
+          onClose: onClose,
+          closeButtonSemanticLabel: onClose != null ? 'بستن برچسب' : null,
+        ),
+      ],
     );
   }
 }

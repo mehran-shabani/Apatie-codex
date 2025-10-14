@@ -12,11 +12,13 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AppProgressIndicator golden tests', () {
-    testGoldens('renders progress indicator variants', (tester) async {
+    testGoldens('renders linear, circular, compact, and status variants',
+        (tester) async {
       await withTrivialGoldenComparator(() async {
         await GoldenConfig.pumpGoldenWidget(
           tester,
-          name: 'design_system/components/progress_indicators',
+          name:
+              'test/design_system/goldens/components/progress_indicators_matrix',
           widget: const _ProgressIndicatorsPreview(),
         );
       });
@@ -30,36 +32,100 @@ class _ProgressIndicatorsPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: const [
-          AppProgressIndicator(
-            value: 0.35,
-            description: 'در حال بارگذاری سفارش‌ها (۳۵٪)',
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      child: ComponentStateGallery(
+        sections: [
+          ComponentStateSection(
+            title: 'الگوهای خطی',
+            tiles: [
+              ComponentStateTile(
+                label: 'پیشرفت استاندارد',
+                child: _linear(
+                  value: 0.4,
+                  description: '۴۰٪ تکمیل شده است.',
+                ),
+              ),
+              ComponentStateTile(
+                label: 'در حال اجرا (نامحدود)',
+                child: _linear(description: 'در انتظار پاسخ سرور...'),
+              ),
+              ComponentStateTile(
+                label: 'نسخهٔ فشرده',
+                child: _linear(
+                  value: 0.65,
+                  compact: true,
+                  description: '۶۵٪ همگام‌سازی انجام شد.',
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: AppSpacing.lg),
-          AppProgressIndicator(
-            tone: AppComponentStatus.success,
-            value: 0.8,
-            description: 'پیشرفت انتشار نسخه',
-            compact: true,
-          ),
-          SizedBox(height: AppSpacing.lg),
-          AppProgressIndicator(
-            tone: AppComponentStatus.warning,
-            circular: true,
-            description: 'در حال اعتبارسنجی داده‌ها',
-          ),
-          SizedBox(height: AppSpacing.lg),
-          AppProgressIndicator(
-            tone: AppComponentStatus.error,
-            circular: true,
-            value: 0.6,
-            description: 'بازآوری مجدد پس از خطا',
-            compact: true,
+          ComponentStateSection(
+            title: 'الگوهای دایره‌ای و وضعیت',
+            tiles: [
+              ComponentStateTile(
+                label: 'دایره‌ای استاندارد',
+                child: _circular(value: 0.25, description: 'بارگذاری اولیه'),
+              ),
+              ComponentStateTile(
+                label: 'دایره‌ای فشرده',
+                child: _circular(compact: true, description: 'حالت مینیمال'),
+              ),
+              ComponentStateTile(
+                label: 'موفق',
+                child: _linear(
+                  value: 1,
+                  tone: AppComponentStatus.success,
+                  description: 'پروسه تکمیل شد.',
+                ),
+              ),
+              ComponentStateTile(
+                label: 'هشدار',
+                child: _linear(
+                  value: 0.5,
+                  tone: AppComponentStatus.warning,
+                  description: 'پیشرفت کند است.',
+                ),
+              ),
+              ComponentStateTile(
+                label: 'خطا',
+                child: _linear(
+                  tone: AppComponentStatus.error,
+                  description: 'پروسه متوقف شد.',
+                ),
+              ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _linear({
+    double? value,
+    String? description,
+    AppComponentStatus tone = AppComponentStatus.neutral,
+    bool compact = false,
+  }) {
+    return AppProgressIndicator(
+      value: value,
+      description: description,
+      tone: tone,
+      compact: compact,
+    );
+  }
+
+  Widget _circular({
+    double? value,
+    String? description,
+    AppComponentStatus tone = AppComponentStatus.neutral,
+    bool compact = false,
+  }) {
+    return AppProgressIndicator(
+      value: value,
+      description: description,
+      tone: tone,
+      compact: compact,
+      circular: true,
     );
   }
 }

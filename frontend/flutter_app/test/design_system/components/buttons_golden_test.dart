@@ -12,11 +12,13 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AppButton golden tests', () {
-    testGoldens('renders button variants', (tester) async {
+    testGoldens('renders interaction and status states side by side',
+        (tester) async {
       await withTrivialGoldenComparator(() async {
         await GoldenConfig.pumpGoldenWidget(
           tester,
-          name: 'design_system/components/buttons',
+          name:
+              'test/design_system/goldens/components/buttons_interaction_states',
           widget: const _ButtonsPreview(),
         );
       });
@@ -30,59 +32,79 @@ class _ButtonsPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              AppButton(label: 'استاندارد', onPressed: () {}),
-              AppButton(
-                label: 'کمپکت',
-                compact: true,
-                onPressed: () {},
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      child: ComponentStateGallery(
+        sections: [
+          ComponentStateSection(
+            title: 'حالت‌های تعاملی دکمه',
+            tiles: [
+              ComponentStateTile(
+                label: 'استاندارد',
+                child: AppButton(
+                  label: 'ارسال',
+                  onPressed: () {},
+                ),
               ),
-              AppButton(
-                label: 'دارای نماد',
-                onPressed: () {},
-                leadingIcon: const Icon(Icons.check_circle),
-                leadingIconSemanticLabel: 'نماد موفقیت',
-                trailingIcon: const Icon(Icons.chevron_left),
-                trailingIconSemanticLabel: 'نمایش جزییات',
+              ComponentStateTile(
+                label: 'حالت شناور',
+                child: GoldenHoverActivator(
+                  child: AppButton(
+                    label: 'شناور',
+                    onPressed: () {},
+                  ),
+                ),
               ),
-              const AppButton(
+              ComponentStateTile(
+                label: 'نسخهٔ فشرده',
+                child: AppButton(
+                  label: 'گزینهٔ سریع',
+                  compact: true,
+                  onPressed: () {},
+                ),
+              ),
+              const ComponentStateTile(
                 label: 'غیرفعال',
-                onPressed: null,
+                child: AppButton(
+                  label: 'در دسترس نیست',
+                  onPressed: null,
+                ),
+              ),
+              ComponentStateTile(
+                label: 'در حال بارگذاری',
+                child: AppButton(
+                  label: 'ارسال',
+                  onPressed: () {},
+                  isLoading: true,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.lg),
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              AppButton(
-                label: 'حالت موفق',
-                onPressed: () {},
-                tone: AppComponentStatus.success,
+          ComponentStateSection(
+            title: 'حالت‌های وضعیت',
+            tiles: [
+              ComponentStateTile(
+                label: 'موفق',
+                child: AppButton(
+                  label: 'موفقیت',
+                  onPressed: () {},
+                  tone: AppComponentStatus.success,
+                ),
               ),
-              AppButton(
-                label: 'حالت هشدار',
-                onPressed: () {},
-                tone: AppComponentStatus.warning,
+              ComponentStateTile(
+                label: 'هشدار',
+                child: AppButton(
+                  label: 'هشدار',
+                  onPressed: () {},
+                  tone: AppComponentStatus.warning,
+                ),
               ),
-              AppButton(
-                label: 'حالت خطا',
-                onPressed: () {},
-                tone: AppComponentStatus.error,
-              ),
-              AppButton(
-                label: 'در حال بارگذاری',
-                onPressed: () {},
-                isLoading: true,
+              ComponentStateTile(
+                label: 'خطا',
+                child: AppButton(
+                  label: 'خطا',
+                  onPressed: () {},
+                  tone: AppComponentStatus.error,
+                ),
               ),
             ],
           ),

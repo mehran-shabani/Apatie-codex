@@ -12,11 +12,11 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AppOptionRow golden tests', () {
-    testGoldens('renders option row variants', (tester) async {
+    testGoldens('displays interaction, density, and tone snapshots', (tester) async {
       await withTrivialGoldenComparator(() async {
         await GoldenConfig.pumpGoldenWidget(
           tester,
-          name: 'design_system/components/option_rows',
+          name: 'test/design_system/goldens/components/option_rows_states',
           widget: const _OptionRowsPreview(),
         );
       });
@@ -29,61 +29,125 @@ class _OptionRowsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          AppOptionRow(
-            title: 'درگاه پرداخت',
-            subtitle: 'فعال و آماده استفاده',
-            leading: CircleAvatar(
-              backgroundColor: theme.colorScheme.primary,
-              child: const Icon(Icons.payment, color: Colors.white),
-            ),
-            trailing: const Icon(Icons.chevron_left),
-            onTap: () {},
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      child: ComponentStateGallery(
+        sections: [
+          ComponentStateSection(
+            title: 'حالات تعاملی',
+            tiles: [
+              ComponentStateTile(
+                label: 'گزینهٔ استاندارد',
+                child: _row(
+                  title: 'اعلان ایمیلی',
+                  subtitle: 'ارسال خلاصهٔ روزانه به صورت خودکار',
+                  onTap: () {},
+                ),
+              ),
+              ComponentStateTile(
+                label: 'حالت شناور',
+                child: GoldenHoverActivator(
+                  child: _row(
+                    title: 'پیشنهاد ویژه',
+                    subtitle: 'نمایش تخفیف برای مشتریان وفادار',
+                    onTap: () {},
+                  ),
+                ),
+              ),
+              ComponentStateTile(
+                label: 'فشرده',
+                child: _row(
+                  title: 'ساعت کاری',
+                  subtitle: 'نمایش در حالت فشرده',
+                  compact: true,
+                  onTap: () {},
+                ),
+              ),
+              ComponentStateTile(
+                label: 'غیرفعال',
+                child: _row(
+                  title: 'امکان لغو',
+                  subtitle: 'در این سطح کاربری غیرفعال است',
+                  disabled: true,
+                ),
+              ),
+              ComponentStateTile(
+                label: 'در حال بارگذاری',
+                child: _row(
+                  title: 'بارگذاری جزئیات',
+                  subtitle: 'داده‌ها در دست آماده‌سازی است',
+                  isLoading: true,
+                  onTap: () {},
+                ),
+              ),
+              ComponentStateTile(
+                label: 'انتخاب‌شده',
+                child: _row(
+                  title: 'فعال‌سازی اعلان‌ها',
+                  subtitle: 'با موفقیت اعمال شد',
+                  onTap: () {},
+                  selected: true,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: AppSpacing.sm),
-          AppOptionRow(
-            title: 'دسترسی مدیر سیستم',
-            subtitle: 'سطح دسترسی کامل',
-            tone: AppComponentStatus.success,
-            selected: true,
-            leading: const Icon(Icons.verified_user),
-            trailing: Switch(
-              value: true,
-              onChanged: (_) {},
-            ),
-            onTap: () {},
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          AppOptionRow(
-            title: 'هشدار پیامک',
-            subtitle: 'پیامک‌های سیستمی فعال است.',
-            tone: AppComponentStatus.info,
-            compact: true,
-            leading: const Icon(Icons.sms),
-            trailing: const Icon(Icons.edit),
-            onTap: () {},
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          AppOptionRow(
-            title: 'گزارش‌های بحرانی',
-            subtitle: 'ارسال خودکار هر ۱۵ دقیقه',
-            tone: AppComponentStatus.warning,
-            isLoading: true,
-            leading: const Icon(Icons.warning_amber),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          const AppOptionRow(
-            title: 'سرویس غیرفعال',
-            subtitle: 'در انتظار فعال‌سازی مجدد',
-            tone: AppComponentStatus.error,
-            disabled: true,
+          ComponentStateSection(
+            title: 'حالت‌های وضعیت',
+            tiles: [
+              ComponentStateTile(
+                label: 'موفق',
+                child: _row(
+                  title: 'پیکربندی کامل',
+                  subtitle: 'همهٔ پارامترها اعتبارسنجی شد',
+                  tone: AppComponentStatus.success,
+                  onTap: () {},
+                ),
+              ),
+              ComponentStateTile(
+                label: 'هشدار',
+                child: _row(
+                  title: 'نیاز به بازبینی',
+                  subtitle: 'سطح دسترسی یکی از اعضا محدود است',
+                  tone: AppComponentStatus.warning,
+                  onTap: () {},
+                ),
+              ),
+              ComponentStateTile(
+                label: 'خطا',
+                child: _row(
+                  title: 'مشکل اتصال',
+                  subtitle: 'سرور اصلی پاسخ نمی‌دهد',
+                  tone: AppComponentStatus.error,
+                  onTap: () {},
+                ),
+              ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _row({
+    required String title,
+    String? subtitle,
+    bool selected = false,
+    bool disabled = false,
+    bool compact = false,
+    bool isLoading = false,
+    AppComponentStatus tone = AppComponentStatus.neutral,
+    VoidCallback? onTap,
+  }) {
+    return AppOptionRow(
+      title: title,
+      subtitle: subtitle,
+      selected: selected,
+      disabled: disabled,
+      compact: compact,
+      isLoading: isLoading,
+      tone: tone,
+      onTap: onTap,
+      trailing: const Icon(Icons.chevron_left),
     );
   }
 }

@@ -12,11 +12,13 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AppInputField golden tests', () {
-    testGoldens('renders input field variants', (tester) async {
+    testGoldens('illustrates interaction, density, and validation states',
+        (tester) async {
       await withTrivialGoldenComparator(() async {
         await GoldenConfig.pumpGoldenWidget(
           tester,
-          name: 'design_system/components/input_fields',
+          name:
+              'test/design_system/goldens/components/input_fields_state_matrix',
           widget: const _InputFieldsPreview(),
         );
       });
@@ -24,78 +26,134 @@ void main() {
   });
 }
 
-class _InputFieldsPreview extends StatefulWidget {
+class _InputFieldsPreview extends StatelessWidget {
   const _InputFieldsPreview();
-
-  @override
-  State<_InputFieldsPreview> createState() => _InputFieldsPreviewState();
-}
-
-class _InputFieldsPreviewState extends State<_InputFieldsPreview> {
-  late final TextEditingController _filledController;
-  late final TextEditingController _successController;
-  late final TextEditingController _errorController;
-
-  @override
-  void initState() {
-    super.initState();
-    _filledController = TextEditingController(text: 'آرات پارسا');
-    _successController = TextEditingController(text: 'AP-4581');
-    _errorController = TextEditingController(text: 'hello@apatie');
-  }
-
-  @override
-  void dispose() {
-    _filledController.dispose();
-    _successController.dispose();
-    _errorController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          AppInputField(
-            label: 'نام کامل',
-            controller: _filledController,
-            helperText: 'نام رسمی خود را وارد کنید.',
-            placeholder: 'مثال: آرات پارسا',
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      child: ComponentStateGallery(
+        sections: [
+          ComponentStateSection(
+            title: 'حالت‌های تعاملی',
+            tiles: [
+              ComponentStateTile(
+                label: 'استاندارد',
+                child: _buildField(
+                  context,
+                  label: 'عنوان گزارش',
+                  helper: 'یک عنوان توصیفی وارد کنید.',
+                ),
+              ),
+              ComponentStateTile(
+                label: 'حالت فوکوس',
+                child: _focusedField(
+                  context,
+                  label: 'جست‌وجو',
+                  placeholder: 'کلیدواژهٔ مورد نظر را وارد کنید',
+                ),
+              ),
+              ComponentStateTile(
+                label: 'در حال بارگذاری',
+                child: _buildField(
+                  context,
+                  label: 'نام مشتری',
+                  helper: 'اطلاعات در حال واکشی است.',
+                  isLoading: true,
+                ),
+              ),
+              const ComponentStateTile(
+                label: 'غیرفعال',
+                child: AppInputField(
+                  label: 'کد پیگیری',
+                  enabled: false,
+                  helperText: 'این فیلد توسط سامانه پر می‌شود.',
+                ),
+              ),
+              ComponentStateTile(
+                label: 'نسخهٔ فشرده',
+                child: _buildField(
+                  context,
+                  label: 'توضیح کوتاه',
+                  compact: true,
+                  helper: 'برای جداول و فضاهای محدود.',
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: AppSpacing.lg),
-          AppInputField(
-            label: 'کد پیگیری',
-            controller: _successController,
-            tone: AppComponentStatus.success,
-            helperText: 'شناسه معتبر است.',
-            compact: true,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          AppInputField(
-            label: 'ایمیل سازمانی',
-            controller: _errorController,
-            tone: AppComponentStatus.error,
-            errorText: 'نشانی ایمیل نامعتبر است.',
-            helperText: 'از دامنهٔ رسمی استفاده کنید.',
-            onRetry: () {},
-            retryLabel: 'تلاش دوباره',
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          const AppInputField(
-            label: 'فقط خواندنی',
-            readOnly: true,
-            placeholder: 'محتوا قابل ویرایش نیست',
-            helperText: 'برای ویرایش سطح دسترسی لازم است.',
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          const AppInputField(
-            label: 'غیرفعال',
-            enabled: false,
-            placeholder: 'این فیلد موقتاً غیرفعال است',
+          ComponentStateSection(
+            title: 'اعتبارسنجی و وضعیت',
+            tiles: [
+              ComponentStateTile(
+                label: 'موفق',
+                child: _buildField(
+                  context,
+                  label: 'کد امنیتی',
+                  tone: AppComponentStatus.success,
+                  helper: 'کد تأیید شد.',
+                ),
+              ),
+              ComponentStateTile(
+                label: 'هشدار',
+                child: _buildField(
+                  context,
+                  label: 'آستانهٔ مصرف',
+                  tone: AppComponentStatus.warning,
+                  helper: 'به سقف مجاز نزدیک می‌شوید.',
+                ),
+              ),
+              ComponentStateTile(
+                label: 'خطا',
+                child: _buildField(
+                  context,
+                  label: 'شماره تماس',
+                  tone: AppComponentStatus.error,
+                  helper: 'فرمت شماره صحیح نیست.',
+                  error: 'لطفاً با ۰۹ شروع شود.',
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildField(
+    BuildContext context, {
+    required String label,
+    String? helper,
+    String? placeholder,
+    AppComponentStatus tone = AppComponentStatus.neutral,
+    bool compact = false,
+    bool isLoading = false,
+    String? error,
+  }) {
+    return AppInputField(
+      label: label,
+      helperText: helper,
+      placeholder: placeholder,
+      tone: tone,
+      compact: compact,
+      isLoading: isLoading,
+      errorText: error,
+    );
+  }
+
+  Widget _focusedField(
+    BuildContext context, {
+    required String label,
+    String? placeholder,
+  }) {
+    final focusNode = FocusNode();
+    return GoldenFocusActivator(
+      focusNode: focusNode,
+      child: AppInputField(
+        label: label,
+        focusNode: focusNode,
+        placeholder: placeholder,
+        helperText: 'نتایج هم‌زمان نمایش داده می‌شود.',
       ),
     );
   }

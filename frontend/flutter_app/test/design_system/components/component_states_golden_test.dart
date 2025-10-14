@@ -11,11 +11,12 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AppComponentStates golden tests', () {
-    testGoldens('renders component state swatches', (tester) async {
+    testGoldens('documents highlighted and disabled palettes', (tester) async {
       await withTrivialGoldenComparator(() async {
         await GoldenConfig.pumpGoldenWidget(
           tester,
-          name: 'design_system/components/component_states',
+          name:
+              'test/design_system/goldens/components/component_state_swatches',
           widget: const _ComponentStatesPreview(),
         );
       });
@@ -29,94 +30,109 @@ class _ComponentStatesPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: const [
-          _ComponentStateSection(title: 'حالات پایه', highlighted: false, disabled: false),
-          SizedBox(height: AppSpacing.lg),
-          _ComponentStateSection(title: 'حالت برجسته', highlighted: true, disabled: false),
-          SizedBox(height: AppSpacing.lg),
-          _ComponentStateSection(title: 'حالت غیرفعال', highlighted: false, disabled: true),
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      child: ComponentStateGallery(
+        sections: const [
+          ComponentStateSection(
+            title: 'حالت‌های پایه',
+            tiles: [
+              _ComponentStateSwatchTile(
+                label: 'خنثی',
+                status: AppComponentStatus.neutral,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'موفق',
+                status: AppComponentStatus.success,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'هشدار',
+                status: AppComponentStatus.warning,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'خطا',
+                status: AppComponentStatus.error,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'اطلاعات',
+                status: AppComponentStatus.info,
+              ),
+            ],
+          ),
+          ComponentStateSection(
+            title: 'در حالت شناور یا تمرکز',
+            tiles: [
+              _ComponentStateSwatchTile(
+                label: 'خنثی برجسته',
+                status: AppComponentStatus.neutral,
+                highlighted: true,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'موفق برجسته',
+                status: AppComponentStatus.success,
+                highlighted: true,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'هشدار برجسته',
+                status: AppComponentStatus.warning,
+                highlighted: true,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'خطا برجسته',
+                status: AppComponentStatus.error,
+                highlighted: true,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'اطلاعات برجسته',
+                status: AppComponentStatus.info,
+                highlighted: true,
+              ),
+            ],
+          ),
+          ComponentStateSection(
+            title: 'حالت‌های غیرفعال',
+            tiles: [
+              _ComponentStateSwatchTile(
+                label: 'خنثی غیرفعال',
+                status: AppComponentStatus.neutral,
+                disabled: true,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'موفق غیرفعال',
+                status: AppComponentStatus.success,
+                disabled: true,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'هشدار غیرفعال',
+                status: AppComponentStatus.warning,
+                disabled: true,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'خطا غیرفعال',
+                status: AppComponentStatus.error,
+                disabled: true,
+              ),
+              _ComponentStateSwatchTile(
+                label: 'اطلاعات غیرفعال',
+                status: AppComponentStatus.info,
+                disabled: true,
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 }
 
-class _ComponentStateSection extends StatelessWidget {
-  const _ComponentStateSection({
-    required this.title,
-    required this.highlighted,
-    required this.disabled,
-  });
-
-  final String title;
-  final bool highlighted;
-  final bool disabled;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          title,
-          style: theme.textTheme.titleSmall,
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          alignment: WrapAlignment.end,
-          children: [
-            _ComponentStateSwatch(
-              status: AppComponentStatus.neutral,
-              label: 'خنثی',
-              highlighted: highlighted,
-              disabled: disabled,
-            ),
-            _ComponentStateSwatch(
-              status: AppComponentStatus.success,
-              label: 'موفق',
-              highlighted: highlighted,
-              disabled: disabled,
-            ),
-            _ComponentStateSwatch(
-              status: AppComponentStatus.warning,
-              label: 'هشدار',
-              highlighted: highlighted,
-              disabled: disabled,
-            ),
-            _ComponentStateSwatch(
-              status: AppComponentStatus.error,
-              label: 'خطا',
-              highlighted: highlighted,
-              disabled: disabled,
-            ),
-            _ComponentStateSwatch(
-              status: AppComponentStatus.info,
-              label: 'اطلاعاتی',
-              highlighted: highlighted,
-              disabled: disabled,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _ComponentStateSwatch extends StatelessWidget {
-  const _ComponentStateSwatch({
+class _ComponentStateSwatchTile extends ComponentStateTile {
+  const _ComponentStateSwatchTile({
+    required String label,
     required this.status,
-    required this.label,
     this.highlighted = false,
     this.disabled = false,
-  });
+  }) : super(label: label, child: const SizedBox.shrink(), width: 240);
 
   final AppComponentStatus status;
-  final String label;
   final bool highlighted;
   final bool disabled;
 
@@ -130,28 +146,43 @@ class _ComponentStateSwatch extends StatelessWidget {
     );
     final theme = Theme.of(context);
 
-    return Container(
-      width: 160,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: colors.background,
-        border: Border.all(color: colors.border, width: 1),
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return SizedBox(
+      width: width,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             label,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge?.copyWith(color: colors.foreground),
+            textAlign: TextAlign.right,
+            style: theme.textTheme.bodyLarge,
           ),
           const SizedBox(height: AppSpacing.sm),
           Container(
-            height: 24,
+            padding: const EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
-              color: colors.border,
+              color: colors.background,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: colors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'پیش‌نمایش',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colors.foreground,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Container(
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: colors.border,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
