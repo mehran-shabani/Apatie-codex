@@ -51,6 +51,10 @@ jobs:
           flutter test integration_test/performance --machine \
             > build/performance/raw_results.json
           status=$?
+          if [ ! -f "../../scripts/parse_performance_metrics.py" ]; then
+            echo "Error: parse_performance_metrics.py not found"
+            exit 1
+          fi
           python3 ../../scripts/parse_performance_metrics.py \
             --input build/performance/raw_results.json \
             --json-output build/performance/metrics.json \
