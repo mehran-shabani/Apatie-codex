@@ -94,6 +94,7 @@ class _LabelsPreview extends StatelessWidget {
     required String text,
     required AppComponentStatus tone,
     bool compact = false,
+    Widget? icon,
     VoidCallback? onClose,
   }) {
     return Wrap(
@@ -105,7 +106,7 @@ class _LabelsPreview extends StatelessWidget {
           text: text,
           tone: tone,
           compact: compact,
-          icon: const Icon(Icons.info_outline),
+          icon: icon ?? const Icon(Icons.info_outline),
           iconSemanticLabel: 'نماد وضعیت',
           onClose: onClose,
           closeButtonSemanticLabel: onClose != null ? 'بستن برچسب' : null,
