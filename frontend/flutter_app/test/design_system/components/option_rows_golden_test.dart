@@ -13,13 +13,11 @@ void main() {
 
   group('AppOptionRow golden tests', () {
     testGoldens('displays interaction, density, and tone snapshots', (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name: 'test/design_system/goldens/components/option_rows_states',
-          widget: const _OptionRowsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name: 'test/design_system/goldens/components/option_rows_states',
+        widget: const _OptionRowsPreview(),
+      );
     });
   });
 }

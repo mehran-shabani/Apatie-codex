@@ -12,14 +12,11 @@ void main() {
 
   group('AppComponentStates golden tests', () {
     testGoldens('documents highlighted and disabled palettes', (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name:
-              'test/design_system/goldens/components/component_state_swatches',
-          widget: const _ComponentStatesPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name: 'test/design_system/goldens/components/component_state_swatches',
+        widget: const _ComponentStatesPreview(),
+      );
     });
   });
 }

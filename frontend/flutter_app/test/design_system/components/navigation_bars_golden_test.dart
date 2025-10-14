@@ -13,14 +13,11 @@ void main() {
 
   group('AppNavigationBar golden tests', () {
     testGoldens('covers compact, loading, and tone variations', (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name:
-              'test/design_system/goldens/components/navigation_bars_variants',
-          widget: const _NavigationBarsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name: 'test/design_system/goldens/components/navigation_bars_variants',
+        widget: const _NavigationBarsPreview(),
+      );
     });
   });
 }

@@ -13,13 +13,11 @@ void main() {
 
   group('AppLabel golden tests', () {
     testGoldens('renders semantic tone and density combinations', (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name: 'test/design_system/goldens/components/labels_variants',
-          widget: const _LabelsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name: 'test/design_system/goldens/components/labels_variants',
+        widget: const _LabelsPreview(),
+      );
     });
   });
 }

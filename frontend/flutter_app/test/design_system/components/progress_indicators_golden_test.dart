@@ -14,14 +14,11 @@ void main() {
   group('AppProgressIndicator golden tests', () {
     testGoldens('renders linear, circular, compact, and status variants',
         (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name:
-              'test/design_system/goldens/components/progress_indicators_matrix',
-          widget: const _ProgressIndicatorsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name: 'test/design_system/goldens/components/progress_indicators_matrix',
+        widget: const _ProgressIndicatorsPreview(),
+      );
     });
   });
 }

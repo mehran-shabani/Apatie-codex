@@ -14,14 +14,12 @@ void main() {
   group('AppInputField golden tests', () {
     testGoldens('illustrates interaction, density, and validation states',
         (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name:
-              'test/design_system/goldens/components/input_fields_state_matrix',
-          widget: const _InputFieldsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name:
+            'test/design_system/goldens/components/input_fields_state_matrix',
+        widget: const _InputFieldsPreview(),
+      );
     });
   });
 }

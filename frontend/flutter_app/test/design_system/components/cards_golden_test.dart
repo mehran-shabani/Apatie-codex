@@ -13,13 +13,11 @@ void main() {
 
   group('AppCard golden tests', () {
     testGoldens('captures layout, hover, and status variants', (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name: 'test/design_system/goldens/components/cards_state_matrix',
-          widget: const _CardsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name: 'test/design_system/goldens/components/cards_state_matrix',
+        widget: const _CardsPreview(),
+      );
     });
   });
 }

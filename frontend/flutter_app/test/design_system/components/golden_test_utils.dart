@@ -1,29 +1,7 @@
-import 'dart:typed_data';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 import 'package:apatie/design_system/foundations/spacing.dart';
-
-Future<T> withTrivialGoldenComparator<T>(Future<T> Function() body) async {
-  final previousComparator = goldenFileComparator;
-  goldenFileComparator = _TrivialGoldenComparator();
-  try {
-    return await body();
-  } finally {
-    goldenFileComparator = previousComparator;
-  }
-}
-
-class _TrivialGoldenComparator extends GoldenFileComparator {
-  _TrivialGoldenComparator() : super(Uri.parse('file:///trivial'));
-
-  @override
-  Future<bool> compare(Uint8List imageBytes, Uri golden) async => true;
-
-  @override
-  Future<void> update(Uri golden, Uint8List imageBytes) async {}
-}
 
 /// Provides a consistent layout for arranging component state previews within
 /// golden tests. Each section renders a title followed by evenly spaced tiles

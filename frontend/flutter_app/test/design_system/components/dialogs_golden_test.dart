@@ -14,13 +14,11 @@ void main() {
 
   group('AppDialog golden tests', () {
     testGoldens('shows tone, compact, and loading variations', (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name: 'test/design_system/goldens/components/dialogs_variants',
-          widget: const _DialogsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name: 'test/design_system/goldens/components/dialogs_variants',
+        widget: const _DialogsPreview(),
+      );
     });
   });
 }

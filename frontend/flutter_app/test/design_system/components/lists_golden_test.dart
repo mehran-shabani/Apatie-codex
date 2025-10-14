@@ -14,13 +14,11 @@ void main() {
 
   group('AppList golden tests', () {
     testGoldens('presents selectable, hovered, and statusful rows', (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name: 'test/design_system/goldens/components/lists_state_showcase',
-          widget: const _ListsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name: 'test/design_system/goldens/components/lists_state_showcase',
+        widget: const _ListsPreview(),
+      );
     });
   });
 }

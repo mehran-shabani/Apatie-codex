@@ -13,14 +13,11 @@ void main() {
 
   group('AppNotification golden tests', () {
     testGoldens('captures tone, density, and dismissible variants', (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name:
-              'test/design_system/goldens/components/notifications_state_matrix',
-          widget: const _NotificationsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name: 'test/design_system/goldens/components/notifications_state_matrix',
+        widget: const _NotificationsPreview(),
+      );
     });
   });
 }

@@ -14,14 +14,12 @@ void main() {
   group('AppButton golden tests', () {
     testGoldens('renders interaction and status states side by side',
         (tester) async {
-      await withTrivialGoldenComparator(() async {
-        await GoldenConfig.pumpGoldenWidget(
-          tester,
-          name:
-              'test/design_system/goldens/components/buttons_interaction_states',
-          widget: const _ButtonsPreview(),
-        );
-      });
+      await GoldenConfig.pumpGoldenWidget(
+        tester,
+        name:
+            'test/design_system/goldens/components/buttons_interaction_states',
+        widget: const _ButtonsPreview(),
+      );
     });
   });
 }
