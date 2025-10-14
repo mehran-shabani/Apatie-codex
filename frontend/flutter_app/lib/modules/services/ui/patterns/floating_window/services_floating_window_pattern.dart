@@ -101,7 +101,7 @@ class _ServicesFloatingWindowPatternState
                     height: windowHeight,
                     padding: const EdgeInsets.all(AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceVariant,
+                      color: theme.colorScheme.surfaceContainerHighest,
                       borderRadius: AppRadii.lgRadius,
                       boxShadow: const [
                         BoxShadow(

@@ -57,8 +57,10 @@ class _FloatingWindowPreviewState extends State<_FloatingWindowPreview> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: <Color>[
+                  // ignore: deprecated_member_use
                   theme.colorScheme.surfaceVariant.withOpacity(0.3),
-                  theme.colorScheme.surfaceVariant.withOpacity(0.05),
+                  // ignore: deprecated_member_use
+                  theme.colorScheme.surfaceContainerHighest.withOpacity(0.05),
                 ],
               ),
             ),

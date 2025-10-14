@@ -115,6 +115,23 @@ class _MarketplaceHorizontalCardBarState
                         ),
                       ],
                     ),
+                    footer: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        AppButton(
+                          label: 'افزودن به بررسی',
+                          onPressed: () => _handleHighlight(index),
+                          compact: true,
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        AppButton(
+                          label: 'انتخاب فوری',
+                          onPressed: () => _handleHighlight(index),
+                          tone: AppComponentStatus.success,
+                          compact: true,
+                        ),
+                      ],
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -133,23 +150,6 @@ class _MarketplaceHorizontalCardBarState
                           description: selected
                               ? 'پس از انتخاب می‌توانید سفارش را نهایی کنید.'
                               : 'برای مقایسهٔ دقیق گزینه‌ها را مرور کنید.',
-                          compact: true,
-                        ),
-                      ],
-                    ),
-                    footer: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        AppButton(
-                          label: 'افزودن به بررسی',
-                          onPressed: () => _handleHighlight(index),
-                          compact: true,
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        AppButton(
-                          label: 'انتخاب فوری',
-                          onPressed: () => _handleHighlight(index),
-                          tone: AppComponentStatus.success,
                           compact: true,
                         ),
                       ],

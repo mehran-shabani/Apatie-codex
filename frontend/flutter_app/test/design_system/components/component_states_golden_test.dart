@@ -123,11 +123,11 @@ class _ComponentStatesPreview extends StatelessWidget {
 
 class _ComponentStateSwatchTile extends ComponentStateTile {
   const _ComponentStateSwatchTile({
-    required String label,
+    required super.label,
     required this.status,
     this.highlighted = false,
     this.disabled = false,
-  }) : super(label: label, child: const SizedBox.shrink(), width: 240);
+  }) : super(child: const SizedBox.shrink(), width: 240);
 
   final AppComponentStatus status;
   final bool highlighted;

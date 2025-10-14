@@ -103,6 +103,7 @@ class _AppOptionRowState extends State<AppOptionRow> {
                   child: Text(
                     widget.subtitle!,
                     style: theme.textTheme.bodyMedium?.copyWith(
+                      // ignore: deprecated_member_use
                       color: colors.foreground.withOpacity(0.8),
                     ),
                   ),

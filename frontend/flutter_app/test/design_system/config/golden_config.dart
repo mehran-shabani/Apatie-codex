@@ -40,7 +40,6 @@ class GoldenConfig {
         : AppTheme.light();
 
     final colorScheme = theme.colorScheme.copyWith(
-      background: surface.backgroundColor,
       surface: surface.surfaceColor,
     );
 
@@ -203,7 +202,7 @@ class GoldenSurface {
   final AppColorPalette palette;
   final ThemeMode themeMode;
 
-  Color get backgroundColor => palette.colorScheme.background;
+  Color get backgroundColor => palette.colorScheme.surface;
   Color get surfaceColor => palette.colorScheme.surface;
 }
 

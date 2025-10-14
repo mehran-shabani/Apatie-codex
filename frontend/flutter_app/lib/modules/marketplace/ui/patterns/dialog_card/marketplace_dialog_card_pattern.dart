@@ -34,6 +34,23 @@ class MarketplaceDialogCardPattern extends StatelessWidget {
             ),
           ],
         ),
+        footer: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            AppButton(
+              label: 'افزودن به مقایسه',
+              compact: true,
+              onPressed: () => Navigator.of(context).pop('compare'),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            AppButton(
+              label: 'تأیید انتخاب',
+              compact: true,
+              tone: AppComponentStatus.success,
+              onPressed: () => Navigator.of(context).pop('confirm'),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -54,23 +71,6 @@ class MarketplaceDialogCardPattern extends StatelessWidget {
               '• امکان دریافت مشاورهٔ تکمیلی پس از جلسه \n'
               '• تضمین بازپرداخت در صورت لغو رسمی',
               style: theme.textTheme.bodyMedium,
-            ),
-          ],
-        ),
-        footer: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            AppButton(
-              label: 'افزودن به مقایسه',
-              compact: true,
-              onPressed: () => Navigator.of(context).pop('compare'),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            AppButton(
-              label: 'تأیید انتخاب',
-              compact: true,
-              tone: AppComponentStatus.success,
-              onPressed: () => Navigator.of(context).pop('confirm'),
             ),
           ],
         ),

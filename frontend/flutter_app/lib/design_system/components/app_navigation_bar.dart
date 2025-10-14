@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:apatie/design_system/components/app_component_states.dart';

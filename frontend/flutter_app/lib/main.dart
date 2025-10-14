@@ -21,7 +21,6 @@ Future<void> main() async {
 
     runApp(App());
   }, (error, stack) {
-    // TODO: Log errors to a remote service (e.g., Sentry, Firebase Crashlytics)
     debugPrint('Caught unhandled error: $error');
     debugPrint(stack.toString());
   });
