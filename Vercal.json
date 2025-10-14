@@ -1,10 +1,10 @@
-{
-  "version": 2,
+{ "version": 2,
+  "root": "frontend/flutter_app",
   "projectSettings": {
     "framework": "other"
   },
-  "installCommand": "cd frontend/flutter_app && flutter pub get",
-  "buildCommand": "cd frontend/flutter_app && flutter build web --release",
-  "outputDirectory": "frontend/flutter_app/build/web",
+  "installCommand": "flutter pub get",
+  "buildCommand": "flutter build web --release",
+  "outputDirectory": "build/web",
   "cleanUrls": true
 }
