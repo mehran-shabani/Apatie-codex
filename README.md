@@ -155,6 +155,15 @@ cd frontend/flutter_app
 flutter test
 ```
 
+### Design system golden tests
+
+Golden coverage for the design system lives under [`frontend/flutter_app/test/design_system/`](frontend/flutter_app/test/design_system/). Contributors must:
+
+* Keep the documentation in [`test/design_system/README.md`](frontend/flutter_app/test/design_system/README.md) handy for prerequisites, local commands, and troubleshooting guidance.
+* Run `flutter test` before every pull request to ensure no regressions slip through. The [Frontend CI workflow](.github/workflows/frontend.yml) executes the same command and will fail the build on any missing assets or unexpected golden diffs.
+* When intentional visual changes occur, regenerate the baselines with `flutter test --update-goldens`, review the PNGs inside [`test/design_system/goldens/`](frontend/flutter_app/test/design_system/goldens/), and commit the updated assets alongside the code.
+* Resolve failing CI snapshots by either updating the baselines (for expected changes) or fixing the widgets (for unintended regressions) before requesting a review.
+
 ## Frontend (Flutter) Setup
 
 The Flutter client lives in `frontend/flutter_app/` and targets Flutter 3.x with sound null safety. The app is organised into feature modules (`appointments`, `marketplace`, `services`) and separates responsibilities into `data`, `domain`, and `ui` layers.
