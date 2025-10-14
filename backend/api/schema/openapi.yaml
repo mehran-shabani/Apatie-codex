@@ -12,10 +12,9 @@ paths:
   /api/auth/jwt/create/:
     post:
       operationId: api_auth_jwt_create_create
-      description: 'Takes a set of user credentials and returns an access and refresh
-        JSON web
-
-        token pair to prove the authentication of those credentials.'
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
       tags:
       - api
       requestBody:
@@ -40,10 +39,9 @@ paths:
   /api/auth/jwt/refresh/:
     post:
       operationId: api_auth_jwt_refresh_create
-      description: 'Takes a refresh type JSON web token and returns an access type
-        JSON web
-
-        token if the refresh token is valid.'
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
       tags:
       - api
       requestBody:

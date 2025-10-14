@@ -2,21 +2,17 @@
 
 from __future__ import annotations
 
+import secrets
+
 import pytest
 from django.urls import reverse
 
-
-def extract_results(payload):
-    """Return the result list from paginated responses."""
-
-    if isinstance(payload, dict) and "results" in payload:
-        return payload["results"]
-    return payload
+from backend.tests.utils import extract_results
 
 
 @pytest.mark.django_db
 def test_jwt_auth_flow(api_client, user_factory):
-    password = "StrongPass123!"
+    password = secrets.token_urlsafe(16)
     user = user_factory(email="auth@example.com", password=password)
 
     token_url = reverse("api_auth:jwt-create")

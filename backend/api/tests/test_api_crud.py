@@ -11,6 +11,8 @@ from business.models import BusinessProfile
 from marketplace.models import Listing
 from services.models import Service
 
+from backend.tests.utils import extract_results
+
 
 @pytest.fixture
 def owner(user_factory):
@@ -80,7 +82,7 @@ def test_listing_crud_lifecycle(api_client, owner, business, service):
     list_response = api_client.get(list_url)
     assert list_response.status_code == 200
     payload = list_response.json()
-    results = payload.get("results", payload)
+    results = extract_results(payload)
     assert any(item["id"] == listing_id for item in results)
 
     delete_response = api_client.delete(detail_url)

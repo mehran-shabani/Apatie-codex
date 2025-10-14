@@ -14,13 +14,7 @@ from business.models import BusinessProfile
 from notifications.adapters import NotificationResult
 from payments.adapters import MockPaymentGateway, PaymentResult, PaymentStatus
 
-
-def extract_results(payload):
-    """Return the result list from paginated responses."""
-
-    if isinstance(payload, dict) and "results" in payload:
-        return payload["results"]
-    return payload
+from backend.tests.utils import extract_results
 
 
 @pytest.mark.django_db
