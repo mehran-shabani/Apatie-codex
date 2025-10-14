@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">نمونهٔ آزمون تصویری</title>
+  <desc id="desc">فهرست — آیتم انتخاب‌شده و خطا</desc>
+  <rect width="960" height="540" fill="#F4F6F8" rx="32"/>
+  <rect x="40" y="40" width="880" height="460" fill="#FFFFFF" stroke="#003366" stroke-width="4" rx="28"/>
+  <text x="480" y="120" font-family="sans-serif" font-size="42" fill="#003366" text-anchor="middle">فهرست — آیتم انتخاب‌شده و خطا</text>
+  <text x="480" y="320" font-family="sans-serif" font-size="28" fill="#52616B" text-anchor="middle">گرفتن از خروجی آزمون تصویری طلایی</text>
+  <text x="480" y="380" font-family="sans-serif" font-size="24" fill="#52616B" text-anchor="middle">به‌روزرسانی با دستور update_goldens</text>
+</svg>
