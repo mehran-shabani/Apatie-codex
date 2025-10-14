@@ -97,32 +97,19 @@ class _ProgressIndicatorsPreview extends StatelessWidget {
     );
   }
 
-  Widget _linear({
+  Widget _buildProgressIndicator({
     double? value,
     String? description,
     AppComponentStatus tone = AppComponentStatus.neutral,
     bool compact = false,
+    bool circular = false,
   }) {
     return AppProgressIndicator(
       value: value,
       description: description,
       tone: tone,
       compact: compact,
-    );
-  }
-
-  Widget _circular({
-    double? value,
-    String? description,
-    AppComponentStatus tone = AppComponentStatus.neutral,
-    bool compact = false,
-  }) {
-    return AppProgressIndicator(
-      value: value,
-      description: description,
-      tone: tone,
-      compact: compact,
-      circular: true,
+      circular: circular,
     );
   }
 }
