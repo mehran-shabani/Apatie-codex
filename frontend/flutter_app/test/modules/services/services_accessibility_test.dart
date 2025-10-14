@@ -40,6 +40,8 @@ void main() {
           messenger.setMockMethodCallHandler(SystemChannels.accessibility, previousHandler);
         });
 
+        final strings = _ServicesStrings.forLocale(config.locale);
+
         await tester.pumpWidget(
           _buildTestApp(
             locale: config.locale,
@@ -51,7 +53,7 @@ void main() {
 
         final floatingContainer = tester.widget<AnimatedContainer>(
           find.descendant(
-            of: find.bySemanticsLabel('پنجرهٔ شناور برای پایش زنده'),
+            of: find.bySemanticsLabel(strings.floatingWindowSemanticsLabel),
             matching: find.byType(AnimatedContainer),
           ),
         );
@@ -80,42 +82,108 @@ void main() {
         await tester.pump();
         expect(
           announcements.any(
-            (message) => message.contains('دکمهٔ کوچک‌سازی'),
+            (message) => message.contains(strings.minimizeButtonLabel),
           ),
           isTrue,
         );
 
-        await tester.tap(find.text('کوچک‌سازی'));
+        await tester.tap(find.text(strings.minimizeLabel));
         await tester.pumpAndSettle();
         expect(
           announcements,
-          contains('دکمهٔ کوچک‌سازی فشرده شد.'),
+          contains(strings.minimizePressedAnnouncement),
         );
-        expect(find.text('حالت فشرده'), findsOneWidget);
-        expect(find.textContaining('پنجره در حالت فشرده'), findsOneWidget);
+        expect(find.text(strings.compactStateLabel), findsOneWidget);
+        expect(find.textContaining(strings.compactStateDescription), findsOneWidget);
 
-        await tester.tap(find.text('پایان پایش'));
+        await tester.tap(find.text(strings.finishMonitoringLabel));
         await tester.pump();
         expect(
           announcements,
-          contains('دکمهٔ پایان پایش فشرده شد.'),
+          contains(strings.finishMonitoringPressedAnnouncement),
         );
         await tester.pump();
-        expect(find.text('پایش زنده با موفقیت پایان یافت.'), findsOneWidget);
+        expect(find.text(strings.monitoringFinishedMessage), findsOneWidget);
 
         await tester.pump(const Duration(seconds: 4));
         await tester.pumpAndSettle();
-        expect(find.text('پایش زنده با موفقیت پایان یافت.'), findsNothing);
+        expect(find.text(strings.monitoringFinishedMessage), findsNothing);
 
-        await tester.tap(find.text('بازگشایی پنجره'));
+        await tester.tap(find.text(strings.restoreLabel));
         await tester.pumpAndSettle();
         expect(
           announcements,
-          contains('دکمهٔ بازگشایی پنجره فشرده شد.'),
+          contains(strings.restorePressedAnnouncement),
         );
-        expect(find.text('فعال'), findsOneWidget);
+        expect(find.text(strings.activeLabel), findsOneWidget);
       },
     );
+  }
+}
+
+class _ServicesStrings {
+  const _ServicesStrings({
+    required this.floatingWindowSemanticsLabel,
+    required this.minimizeButtonLabel,
+    required this.minimizeLabel,
+    required this.minimizePressedAnnouncement,
+    required this.compactStateLabel,
+    required this.compactStateDescription,
+    required this.finishMonitoringLabel,
+    required this.finishMonitoringPressedAnnouncement,
+    required this.monitoringFinishedMessage,
+    required this.restoreLabel,
+    required this.restorePressedAnnouncement,
+    required this.activeLabel,
+  });
+
+  final String floatingWindowSemanticsLabel;
+  final String minimizeButtonLabel;
+  final String minimizeLabel;
+  final String minimizePressedAnnouncement;
+  final String compactStateLabel;
+  final String compactStateDescription;
+  final String finishMonitoringLabel;
+  final String finishMonitoringPressedAnnouncement;
+  final String monitoringFinishedMessage;
+  final String restoreLabel;
+  final String restorePressedAnnouncement;
+  final String activeLabel;
+
+  static _ServicesStrings forLocale(Locale locale) {
+    switch (locale.languageCode) {
+      case 'en':
+        return const _ServicesStrings(
+          floatingWindowSemanticsLabel: 'پنجرهٔ شناور برای پایش زنده',
+          minimizeButtonLabel: 'دکمهٔ کوچک‌سازی',
+          minimizeLabel: 'کوچک‌سازی',
+          minimizePressedAnnouncement: 'دکمهٔ کوچک‌سازی فشرده شد.',
+          compactStateLabel: 'حالت فشرده',
+          compactStateDescription: 'پنجره در حالت فشرده قرار دارد.',
+          finishMonitoringLabel: 'پایان پایش',
+          finishMonitoringPressedAnnouncement: 'دکمهٔ پایان پایش فشرده شد.',
+          monitoringFinishedMessage: 'پایش زنده با موفقیت پایان یافت.',
+          restoreLabel: 'بازگشایی پنجره',
+          restorePressedAnnouncement: 'دکمهٔ بازگشایی پنجره فشرده شد.',
+          activeLabel: 'فعال',
+        );
+      case 'fa':
+      default:
+        return const _ServicesStrings(
+          floatingWindowSemanticsLabel: 'پنجرهٔ شناور برای پایش زنده',
+          minimizeButtonLabel: 'دکمهٔ کوچک‌سازی',
+          minimizeLabel: 'کوچک‌سازی',
+          minimizePressedAnnouncement: 'دکمهٔ کوچک‌سازی فشرده شد.',
+          compactStateLabel: 'حالت فشرده',
+          compactStateDescription: 'پنجره در حالت فشرده قرار دارد.',
+          finishMonitoringLabel: 'پایان پایش',
+          finishMonitoringPressedAnnouncement: 'دکمهٔ پایان پایش فشرده شد.',
+          monitoringFinishedMessage: 'پایش زنده با موفقیت پایان یافت.',
+          restoreLabel: 'بازگشایی پنجره',
+          restorePressedAnnouncement: 'دکمهٔ بازگشایی پنجره فشرده شد.',
+          activeLabel: 'فعال',
+        );
+    }
   }
 }
 
