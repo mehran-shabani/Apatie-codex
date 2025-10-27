@@ -64,7 +64,7 @@ jobs:
 
       - name: Upload performance metrics artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: frontend-performance-metrics
           path: frontend/flutter_app/build/performance
