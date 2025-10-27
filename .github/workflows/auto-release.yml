@@ -239,19 +239,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download APK artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: app-release.apk
           path: artifacts
 
       - name: Download web artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: frontend_web.zip
           path: artifacts
 
       - name: Download repository archive
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: repository-archive
           path: artifacts
